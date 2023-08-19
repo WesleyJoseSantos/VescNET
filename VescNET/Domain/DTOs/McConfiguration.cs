@@ -59,7 +59,7 @@ namespace VescNET.Domain.DTOs
         public float SlBemfCouplingK { get; set; }
 
         // Hall sensor
-        public sbyte[] HallTable { get; set; }
+        public byte[] HallTable { get; set; }
         public float HallSlErpm { get; set; }
 
         // FOC

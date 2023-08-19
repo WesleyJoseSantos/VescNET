@@ -8,8 +8,8 @@ namespace VescNET.Infra
 {
     public class Bldc : IBldc
     {
-        private IBuffer buffer;
-        private IBldcComm comm;
+        private readonly IBuffer buffer;
+        private readonly IBldcComm comm;
 
         public Bldc(IBuffer buffer, IBldcComm comm)
         {

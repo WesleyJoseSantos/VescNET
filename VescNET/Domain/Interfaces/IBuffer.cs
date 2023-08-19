@@ -9,10 +9,14 @@ namespace VescNET.Domain.Interfaces
     public interface IBuffer
     {
         byte[] Data { get; }
+        int Length {get; }
+
+        void Init(byte[] data);
         void Clear();
         void AppendData<T>(T data);
         void AppendData<T>(T data, float scale);
         T GetData<T>(ref int index);
         T GetData<T>(ref int index, float scale);
+        T[] GetData<T>(ref int index, uint size);
     }
 }

@@ -8,14 +8,20 @@ namespace VescNET.Infra
     {
         private int idx;
 
-        private readonly byte[] _data;
+        private byte[] _data;
 
         public byte[] Data => _data;
 
-        public Buffer(int size)
+        public int Length => _data.Length;
+
+        public Buffer()
         {
-            _data = new byte[size];
             idx = 0;
+        }
+
+        public void Init(byte[] data)
+        {
+            _data = data;
         }
 
         public void AppendData<T>(T data)
@@ -85,6 +91,16 @@ namespace VescNET.Infra
             throw new NotImplementedException();
         }
 
+        public T[] GetData<T>(ref int index, uint size)
+        {
+            var data = new T[size];
+            for (int i = 0; i < size; i++)
+            {
+                data[i] = GetData<T>(ref index);
+            }
+            return data;
+        }
+
         private void AppendInt32(int value)
         {
             _data[idx++] = (byte)(value >> 24);
@@ -92,5 +108,6 @@ namespace VescNET.Infra
             _data[idx++] = (byte)(value >> 8);
             _data[idx++] = (byte)(value);
         }
+
     }
 }

@@ -10,10 +10,8 @@ namespace VescNET.Domain.Interfaces
 {
     public interface IPacket
     {
-        byte[] Tx { get; }
-        byte[] Rx { get; }
         ReceivedData ReceivedData { get; }
         PacketProcessState ProcessRX(byte @byte);
-        void ProcessTX(byte[] data);
+        byte[] ProcessTX(byte[] data);
     }
 }

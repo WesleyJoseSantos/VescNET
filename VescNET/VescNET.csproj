@@ -47,6 +47,7 @@
     <Compile Include="Domain\DTOs\CanStatusMsg.cs" />
     <Compile Include="Domain\DTOs\ChuckConfig.cs" />
     <Compile Include="Domain\DTOs\ChukControlType.cs" />
+    <Compile Include="Domain\DTOs\DetectedMotorParams.cs" />
     <Compile Include="Domain\DTOs\McConfiguration.cs" />
     <Compile Include="Domain\DTOs\McValues.cs" />
     <Compile Include="Domain\DTOs\NrfConfig.cs" />
@@ -69,9 +70,13 @@
     <Compile Include="Domain\Interfaces\IBldcComm.cs" />
     <Compile Include="Domain\Interfaces\IPacket.cs" />
     <Compile Include="Domain\Interfaces\IBuffer.cs" />
+    <Compile Include="Domain\Interfaces\IPacketProcess.cs" />
     <Compile Include="Infra\Bldc.cs" />
     <Compile Include="Infra\BldcSerial.cs" />
     <Compile Include="Infra\Buffer.cs" />
+    <Compile Include="Infra\CRC16.cs" />
+    <Compile Include="Infra\Packet.cs" />
+    <Compile Include="Infra\PacketProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

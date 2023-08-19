@@ -34,8 +34,8 @@ namespace VescNET.Infra
 
         public void Send(IBuffer buffer)
         {
-            packet.ProcessTX(buffer.Data);
-            serial.Write(packet.Tx, 0, packet.Tx.Length);
+            var result = packet.ProcessTX(buffer.Data);
+            serial.Write(result, 0, result.Length);
         }
     }
 }

@@ -50,6 +50,7 @@
     <Compile Include="Domain\DTOs\DecodedADC.cs" />
     <Compile Include="Domain\DTOs\DecodedPPM.cs" />
     <Compile Include="Domain\DTOs\DetectedMotorParams.cs" />
+    <Compile Include="Domain\DTOs\DeviceInfo.cs" />
     <Compile Include="Domain\DTOs\McConfiguration.cs" />
     <Compile Include="Domain\DTOs\McValues.cs" />
     <Compile Include="Domain\DTOs\NrfConfig.cs" />

@@ -10,7 +10,6 @@ namespace VescNET.Infra
         const int _packetMaxLength = 512;
         const int _packetRxTimeout = 2;
 
-        private CRC16 _crc16;
         private ReceivedData _receivedData;
         private IBuffer _buffer;
         private IPacketProcess _packetProcess;
@@ -29,7 +28,6 @@ namespace VescNET.Infra
 
         public Packet(IBuffer buffer, IPacketProcess packetProcess) 
         {
-            _crc16 = new CRC16();
             _receivedData = new ReceivedData();
             _rxBuf = new byte[_packetMaxLength];
             _txBuf = new byte[_packetMaxLength + 6];
@@ -113,14 +111,22 @@ namespace VescNET.Infra
                     if (@byte == 3)
                     {
                         var receivedCrc = _crcHigh << 8 | _crcLow;
-                        var calculatedCrc = _crc16.ComputeChecksum(_rxBuf);
-                        if(calculatedCrc == receivedCrc)
-                        { 
+                        var calculatedCrc = CRC16.ComputeChecksum(_rxBuf, _payloadLength);
+                        if (calculatedCrc == receivedCrc)
+                        {
                             _receivedData = _packetProcess.Call(_buffer, _payloadLength);
+                            _processState = PacketProcessState.Done;
+                        }
+                        else
+                        {
+                            _processState = PacketProcessState.Error;
                         }
                     }
+                    else
+                    {
+                        _processState = PacketProcessState.Error;
+                    }
                     _rxState = 0;
-                    _processState = PacketProcessState.Idle;
                     break;
 
                 default:
@@ -158,13 +164,15 @@ namespace VescNET.Infra
                 _txBuf[bInd++] = data[i];
             }
 
-            ushort crc = _crc16.ComputeChecksum(data);
+            ushort crc = CRC16.ComputeChecksum(data);
 
             _txBuf[bInd++] = (byte)(crc >>  8);
             _txBuf[bInd++] = (byte)(crc & 0xff);
             _txBuf[bInd++] = 3;
 
-            return _txBuf;
+            var ret = new byte[bInd];
+            Array.Copy(_txBuf, ret, bInd);
+            return ret;
         }
     }
 }

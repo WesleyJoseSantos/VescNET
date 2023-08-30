@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Schema;
 using VescNET.Domain.DTOs;
 using VescNET.Domain.Enums;
 using VescNET.Domain.Interfaces;
@@ -67,18 +60,18 @@ namespace VescNET.Infra
                 // case CommPacketId.SetServoPos:
                 //     OnSetServoPos(buffer);
                 //     break;
-                // case CommPacketId.SetMcConf:
-                //     OnSetMcConf(buffer);
-                //     break;
+                case CommPacketId.SetMcConf:
+                    // This is a confirmation that the new mcconf is received.
+                    break;
                 case CommPacketId.GetMcConf:
                     OnGetMcConf(buffer);
                     break;
                 case CommPacketId.GetMcConfDefault:
                     OnGetMcConfDefault(buffer);
                     break;
-                // case CommPacketId.SetAppConf:
-                //     OnSetAppConf(buffer);
-                //     break;
+                case CommPacketId.SetAppConf:
+                    // This is a confirmation that the new appconf is received.
+                    break;
                 case CommPacketId.GetAppConf:
                     OnGetAppConf(buffer);
                     break;
@@ -122,26 +115,26 @@ namespace VescNET.Infra
                 //     OnAlive(buffer);
                 //     break;
                 case CommPacketId.GetDecodedPpm:
-                    OnGetDecodedPpm(buffer);
+                    OnGetDecodedPPM(buffer);
                     break;
-                // case CommPacketId.GetDecodedAdc:
-                //     OnGetDecodedAdc(buffer);
-                //     break;
-                // case CommPacketId.GetDecodedChuk:
-                //     OnGetDecodedChuk(buffer);
-                //     break;
-                // case CommPacketId.ForwardCan:
-                //     OnForwardCan(buffer);
-                //     break;
-                // case CommPacketId.SetChuckData:
-                //     OnSetChuckData(buffer);
-                //     break;
-                // case CommPacketId.CustomAppData:
-                //     OnCustomAppData(buffer);
-                //     break;
-                // case CommPacketId.NrfStartPairing:
-                //     OnNrfStartPairing(buffer);
-                //     break;
+                case CommPacketId.GetDecodedAdc:
+                    OnGetDecodedADC(buffer);
+                    break;
+                case CommPacketId.GetDecodedChuk:
+                    OnGetDecodedChuk(buffer);
+                    break;
+                    // case CommPacketId.ForwardCan:
+                    //     OnForwardCan(buffer);
+                    //     break;
+                    // case CommPacketId.SetChuckData:
+                    //     OnSetChuckData(buffer);
+                    //     break;
+                    // case CommPacketId.CustomAppData:
+                    //     OnCustomAppData(buffer);
+                    //     break;
+                    // case CommPacketId.NrfStartPairing:
+                    //     OnNrfStartPairing(buffer);
+                    //     break;
             }
 
             return _recv;
@@ -455,17 +448,35 @@ namespace VescNET.Infra
         {
             var ind = 0;
             var data = new DetectedMotorParams();
-
             data.CycleIntLimit = buffer.GetData<float>(ref ind, 1000.0f);
             data.CouplingK = buffer.GetData<float>(ref ind, 1000.0f);
             data.HalTable = buffer.GetData<byte>(ref ind, 8);
             data.HalRes = buffer.GetData<byte>(ref ind);
-
             _recv.Data = data;
         }
 
-        void OnGetDecodedPpm(IBuffer buffer) {
-            
+        void OnGetDecodedPPM(IBuffer buffer) 
+        {
+            var ind = 0;
+            var data = new DecodedPPM();
+            data.Value = buffer.GetData<float>(ref ind, 1000000.0f);
+            data.Lenght = buffer.GetData<float>(ref ind, 1000000.0f);
+            _recv.Data = data;
+        }
+
+        void OnGetDecodedADC(IBuffer buffer)
+        {
+            var ind = 0;
+            var data = new DecodedADC();
+            data.Value = buffer.GetData<float>(ref ind, 1000000.0f);
+            data.Voltage = buffer.GetData<float>(ref ind, 1000000.0f);
+            _recv.Data = data;
+        }
+
+        void OnGetDecodedChuk(IBuffer buffer)
+        {
+            var ind = 0;
+            _recv.Data = buffer.GetData<float>(ref ind, 1000000.0f);
         }
     }
 }

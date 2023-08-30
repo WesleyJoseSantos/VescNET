@@ -47,6 +47,8 @@
     <Compile Include="Domain\DTOs\CanStatusMsg.cs" />
     <Compile Include="Domain\DTOs\ChuckConfig.cs" />
     <Compile Include="Domain\DTOs\ChukControlType.cs" />
+    <Compile Include="Domain\DTOs\DecodedADC.cs" />
+    <Compile Include="Domain\DTOs\DecodedPPM.cs" />
     <Compile Include="Domain\DTOs\DetectedMotorParams.cs" />
     <Compile Include="Domain\DTOs\McConfiguration.cs" />
     <Compile Include="Domain\DTOs\McValues.cs" />

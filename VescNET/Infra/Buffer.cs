@@ -10,9 +10,17 @@ namespace VescNET.Infra
 
         private byte[] _data;
 
-        public byte[] Data => _data;
+        public byte[] Data
+        {
+            get
+            {
+                var data = new byte[idx];
+                Array.Copy(_data, data, idx);
+                return data;
+            }
+        }
 
-        public int Length => _data.Length;
+        public int Length => idx;
 
         public Buffer()
         {
@@ -28,16 +36,15 @@ namespace VescNET.Infra
         {
             if(data == null) throw new ArgumentNullException("data");
 
-            if (typeof(T) == typeof(byte))
+            if (typeof(T) == typeof(byte) ||
+               typeof(T) == typeof(CommPacketId))
             {
                 dynamic number = data;
                 _data[idx++] = (byte)number;
                 return;
             }
 
-            if(typeof(T) == typeof(bool) ||
-               typeof(T) == typeof(CommPacketId) ||
-               typeof(T) == typeof(uint) || 
+            if (typeof(T) == typeof(uint) || 
                typeof(T) == typeof(int) ||
                typeof(T) == typeof(float))
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using VescNET.Domain.DTOs;
 using VescNET.Domain.Enums;
 using VescNET.Domain.Interfaces;
@@ -142,14 +143,17 @@ namespace VescNET.Infra
 
         private void OnFwVersion(IBuffer buffer) 
         {
-            if(_payloadLenght == 2)
-            {
-                int ind = 0;
-                byte major = buffer.GetData<byte>(ref ind);
-                byte minor = buffer.GetData<byte>(ref ind);
-                var data = $"{major}.{minor}";
-                _recv.Data = data;
-            }
+            var data = new DeviceInfo();
+            int ind = 0;
+
+            byte[] firmware = buffer.GetData<byte>(ref ind, 2);
+            byte[] hardware = buffer.GetData<byte>(ref ind, 3);
+
+            data.FirmwareVersion = $"{firmware[0]}.{firmware[1]}";
+            data.HardwareVersion = Encoding.ASCII.GetString(hardware).Trim();
+            data.Uuid = buffer.GetData<byte>(ref ind, 12);
+
+            _recv.Data = data;
         }
 
         private void OnEraseNewApp(IBuffer buffer)
@@ -357,12 +361,101 @@ namespace VescNET.Infra
             _recv.Data = data;
         }
 
-        public void OnGetAppConf(IBuffer buffer)
+        static public void PrintData(ReceivedData data)
+        {
+            switch (data.PacketId)
+            {
+                case CommPacketId.FwVersion:
+                    var e = data.Data as DeviceInfo;
+                    Console.WriteLine($"Firmware Version: {e.FirmwareVersion}");
+                    Console.WriteLine($"Hardware Version: {e.HardwareVersion}");
+                    Console.WriteLine($"UUID: {BitConverter.ToString(e.Uuid)}");
+                    break;
+                case CommPacketId.JumpToBootloader:
+                    break;
+                case CommPacketId.EraseNewApp:
+                    break;
+                case CommPacketId.WriteNewAppData:
+                    break;
+                case CommPacketId.GetValues:
+                    break;
+                case CommPacketId.SetDuty:
+                    break;
+                case CommPacketId.SetCurrent:
+                    break;
+                case CommPacketId.SetCurrentBrake:
+                    break;
+                case CommPacketId.SetRpm:
+                    break;
+                case CommPacketId.SetPos:
+                    break;
+                case CommPacketId.SetHandbrake:
+                    break;
+                case CommPacketId.SetDetect:
+                    break;
+                case CommPacketId.SetServoPos:
+                    break;
+                case CommPacketId.SetMcConf:
+                    break;
+                case CommPacketId.GetMcConf:
+                    break;
+                case CommPacketId.GetMcConfDefault:
+                    break;
+                case CommPacketId.SetAppConf:
+                    break;
+                case CommPacketId.GetAppConf:
+                    break;
+                case CommPacketId.GetAppConfDefault:
+                    break;
+                case CommPacketId.SamplePrint:
+                    break;
+                case CommPacketId.TerminalCmd:
+                    break;
+                case CommPacketId.Print:
+                    break;
+                case CommPacketId.RotorPosition:
+                    break;
+                case CommPacketId.ExperimentSample:
+                    break;
+                case CommPacketId.DetectMotorParam:
+                    break;
+                case CommPacketId.DetectMotorRL:
+                    break;
+                case CommPacketId.DetectMotorFluxLinkage:
+                    break;
+                case CommPacketId.DetectEncoder:
+                    break;
+                case CommPacketId.DetectHallFoc:
+                    break;
+                case CommPacketId.Reboot:
+                    break;
+                case CommPacketId.Alive:
+                    break;
+                case CommPacketId.GetDecodedPpm:
+                    break;
+                case CommPacketId.GetDecodedAdc:
+                    break;
+                case CommPacketId.GetDecodedChuk:
+                    break;
+                case CommPacketId.ForwardCan:
+                    break;
+                case CommPacketId.SetChuckData:
+                    break;
+                case CommPacketId.CustomAppData:
+                    break;
+                case CommPacketId.NrfStartPairing:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void OnGetAppConf(IBuffer buffer)
         {
             // TODO
         }
 
-        public void OnGetAppConfDefault(IBuffer buffer)
+        void OnGetAppConfDefault(IBuffer buffer)
         {
             int ind = 0;
             var data = new AppConfiguration();

@@ -51,7 +51,7 @@ namespace VescNET.Infra
             }
             for (i = 0; i < length; i++)
             {
-                cksum = (ushort)(table[((cksum >> 8) ^ table[i]) & 0xFF] ^ (cksum << 8));
+                cksum = (ushort)(table[((cksum >> 8) ^ bytes[i]) & 0xFF] ^ (cksum << 8));
             }
             return cksum;
         }

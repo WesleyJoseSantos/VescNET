@@ -8,7 +8,9 @@ namespace VescNET.Domain.DTOs
 {
     internal class DecodedADC
     {
-        public float Value { get; set; }
+        public float DecodedLevel { get; set; }
         public float Voltage { get; set; }
+        public float DecodedLevel2 { get; set; }
+        public float Voltage2 { get; set; }
     }
 }

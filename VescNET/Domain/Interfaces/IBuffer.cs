@@ -15,8 +15,9 @@ namespace VescNET.Domain.Interfaces
         void Clear();
         void AppendData<T>(T data);
         void AppendData<T>(T data, float scale);
-        T GetData<T>(ref int index);
-        T GetData<T>(ref int index, float scale);
-        T[] GetData<T>(ref int index, uint size);
+        T GetData<T>(ref int index, float scale = 0);
+        T GetHalf<T>(ref int index, float scale = 0);
+        T[] GetData<T>(ref int index, uint size, float scale = 0);
+        T[] GetHalf<T>(ref int index, uint size, float scale = 0);
     }
 }

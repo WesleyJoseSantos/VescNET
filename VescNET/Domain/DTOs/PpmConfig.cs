@@ -16,7 +16,7 @@ namespace VescNET.Domain.DTOs
         public float PulseEnd { get; set; }
         public float PulseCenter { get; set; }
         public bool MedianFilter { get; set; }
-        public bool SafeStart { get; set; }
+        public byte SafeStart { get; set; }
         public float ThrottleExp { get; set; }
         public float ThrottleExpBrake { get; set; }
         public ThrExpMode ThrottleExpMode { get; set; }
@@ -25,5 +25,8 @@ namespace VescNET.Domain.DTOs
         public bool MultiEsc { get; set; }
         public bool Tc { get; set; }
         public float TcMaxDiff { get; set; }
+        public float MaxErpmForDir { get; set; }
+        public float SmartRevMaxDuty { get; set; }
+        public float SmartRevRamptime { get; set; }
     }
 }

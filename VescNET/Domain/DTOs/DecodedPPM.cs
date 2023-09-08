@@ -8,7 +8,7 @@ namespace VescNET.Domain.DTOs
 {
     internal class DecodedPPM
     {
-        public float Value { get; set; }
-        public float Lenght { get; set; }
+        public float DecodedLevel { get; set; }
+        public float LastPulseLen { get; set; }
     }
 }

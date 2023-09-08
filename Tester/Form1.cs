@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO.Ports;
 using System.Windows.Forms;
-using VescNET.Domain.DTOs;
 using VescNET.Domain.Interfaces;
 using VescNET.Infra;
 
@@ -39,12 +29,12 @@ namespace Tester
 
         private void Form1_Load(object sender, System.EventArgs e)
         {
-            bldc.GetFwVersion();
+            bldc.GetValues();
         }
 
         private void BldcComm_OnData(object sender, VescNET.Domain.DTOs.ReceivedData e)
         {
-            
+            PacketProcess.PrintData(e);
         }
     }
 }

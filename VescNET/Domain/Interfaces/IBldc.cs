@@ -1,6 +1,4 @@
-﻿using System;
-using VescNET.Domain.DTOs;
-using VescNET.Domain.Enums;
+﻿using VescNET.Domain.DTOs;
 
 namespace VescNET.Domain.Interfaces
 {
@@ -9,10 +7,9 @@ namespace VescNET.Domain.Interfaces
         void GetFwVersion();
         void GetValues();
         void GetMcconf();
+        void GetMcconfDefault();
         void GetAppconf();
-        void GetDecodedPpm();
-        void GetDecodedAdc();
-        void GetDecodedChuk();
+        void GetAppconfDefault();
 
         void TerminalCmd(string cmd);
         void SetDutyCycle(float dutyCycle);

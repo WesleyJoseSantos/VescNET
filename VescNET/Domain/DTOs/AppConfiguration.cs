@@ -13,9 +13,14 @@ namespace VescNET.Domain.DTOs
         public byte ControllerId { get; set; }
         public uint TimeoutMsec { get; set; }
         public float TimeoutBrakeCurrent { get; set; }
-        public bool SendCanStatus { get; set; }
-        public uint SendCanStatusRateHz { get; set; }
-        public CanBaud CanBaudRate { get; set; }
+
+        public CanConfig CanConfig { get; set; }
+
+        public bool PairingDone { get; set; }
+        public bool EnablePermanentUart { get; set; }
+        public byte ShutdownMode { get; set; }
+        public bool ServoOutEnabled { get; set; }
+        public byte KillSwitchMode { get; set; }
 
         // Application to use
         public AppUse AppToUse { get; set; }
@@ -34,6 +39,26 @@ namespace VescNET.Domain.DTOs
 
         // NRF application settings
         public NrfConfig NrfConf { get; set; }
-    }
 
+        // Balance application settings
+        public BalanceConfig BalanceConf { get; set; }
+
+        // PAS application settings
+        public PasConfig PasConf { get; set; }
+
+        // IMU application settings
+        public ImuConfig ImuConf { get; set; }
+
+        public AppConfiguration()
+        {
+            CanConfig = new CanConfig();
+            PpmConf = new PpmConfig();
+            AdcConf = new AdcConfig();
+            ChukConf = new ChukConfig();
+            NrfConf = new NrfConfig();
+            BalanceConf = new BalanceConfig();
+            PasConf = new PasConfig();
+            ImuConf = new ImuConfig();
+        }
+    }
 }

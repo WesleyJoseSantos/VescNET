@@ -68,42 +68,66 @@ namespace VescNET.Infra
             idx = 0;
         }
 
-        public T GetData<T>(ref int index)
+        public T GetData<T>(ref int index, float scale = 0)
         {
-            if (typeof(T) == typeof(byte))
+            if (typeof(T) == typeof(byte) || 
+                
+                typeof(T) == typeof(bool))
             {
-                index++;
-                return (T)Convert.ChangeType(_data[index], typeof(T));
+                return (T)Convert.ChangeType(_data[index++], typeof(T));
             }
 
-            if (typeof(T) == typeof(bool) ||
-               typeof(T) == typeof(CommPacketId) ||
+            if (typeof(T) == typeof(ushort) || typeof(T) == typeof(short))
+            {
+                var number = _data[index++] << 8;
+                number += _data[index++];
+                return Scale<T>(number, scale);
+            }
+
+            if (typeof(T) == typeof(CommPacketId) ||
                typeof(T) == typeof(uint) ||
                typeof(T) == typeof(int) ||
                typeof(T) == typeof(float))
             {
-                var number = _data[index] << 24;
-                number += _data[index + 1] << 16;
-                number += _data[index + 2] << 8;
-                number += _data[index + 3];
-                index += 4;
-                return (T)Convert.ChangeType(number, typeof(T));
+                var number = _data[index++] << 24;
+                number += _data[index++] << 16;
+                number += _data[index++] << 8;
+                number += _data[index++];
+                return Scale<T>(number, scale);
             }
 
             throw new TypeAccessException();
         }
 
-        public T GetData<T>(ref int index, float scale)
+        public T GetHalf<T>(ref int index, float scale = 0)
         {
-            throw new NotImplementedException();
+            // TODO: implement 16 bits negative floats
+            if(typeof(T) == typeof(float))
+            {
+                var number = _data[index++] << 8;
+                number += _data[index++];
+                return Scale<T>(number, scale);
+            }
+
+            throw new TypeAccessException();
         }
 
-        public T[] GetData<T>(ref int index, uint size)
+        public T[] GetData<T>(ref int index, uint size, float scale = 0)
         {
             var data = new T[size];
             for (int i = 0; i < size; i++)
             {
-                data[i] = GetData<T>(ref index);
+                data[i] = GetData<T>(ref index, scale);
+            }
+            return data;
+        }
+
+        public T[] GetHalf<T>(ref int index, uint size, float scale = 0)
+        {
+            var data = new T[size];
+            for (int i = 0; i < size; i++)
+            {
+                data[i] = GetHalf<T>(ref index, scale);
             }
             return data;
         }
@@ -116,5 +140,48 @@ namespace VescNET.Infra
             _data[idx++] = (byte)(value);
         }
 
+        private T Scale<T>(int number, float scale = 0)
+        {
+            if(typeof(T) == typeof(uint))
+            {
+                var scaledNumber = (uint)number;
+                return (T)Convert.ChangeType(scaledNumber, typeof(T));
+            }
+            else if (typeof(T) == typeof(float) && scale == 0)
+            {
+                var scaledNumber = FloatAutoScale((uint)number);
+                return (T)Convert.ChangeType(scaledNumber, typeof(T));
+            }
+            else if (scale != 0)
+            {
+                var scaledNumber = Convert.ToSingle(number) / scale;
+                return (T)Convert.ChangeType(scaledNumber, typeof(T));
+            }
+            else
+            {
+                return (T)Convert.ChangeType(number, typeof(T));
+            }
+        }
+
+        static float FloatAutoScale(uint res)
+        {
+            int e = (int)((res >> 23) & 0xFF);
+            uint sig_i = res & 0x7FFFFF;
+            bool neg = (res & (1 << 31)) != 0;
+
+            float sig = 0.0f;
+            if (e != 0 || sig_i != 0)
+            {
+                sig = (float)sig_i / (8388608.0f * 2.0f) + 0.5f;
+                e -= 126;
+            }
+
+            if (neg)
+            {
+                sig = -sig;
+            }
+
+            return (float)(sig * Math.Pow(2, e));
+        }
     }
 }

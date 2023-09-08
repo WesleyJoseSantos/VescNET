@@ -20,6 +20,9 @@ namespace VescNET.Domain.DTOs
         public bool MultiEsc { get; set; }
         public bool Tc { get; set; }
         public float TcMaxDiff { get; set; }
+        public bool UseSmartRev { get; set; }
+        public float SmartRevMaxDuty { get; set; }
+        public float SmartRevRamptime { get; set; }
     }
 
 }

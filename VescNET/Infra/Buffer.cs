@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Reflection;
 using VescNET.Domain.Enums;
 using VescNET.Domain.Interfaces;
 
@@ -32,35 +34,57 @@ namespace VescNET.Infra
             _data = data;
         }
 
-        public void AppendData<T>(T data)
+        public void AppendData<T>(T data, float scale = 1)
         {
             if(data == null) throw new ArgumentNullException("data");
 
+            if(typeof(T) == typeof(string))
+            {
+                AppendText(data as string);
+            }
+
             if (typeof(T) == typeof(byte) ||
-               typeof(T) == typeof(CommPacketId))
+                typeof(T) == typeof(CommPacketId))
             {
                 dynamic number = data;
                 _data[idx++] = (byte)number;
                 return;
             }
 
-            if (typeof(T) == typeof(uint) || 
+            if (typeof(T) == typeof(uint) ||
                typeof(T) == typeof(int) ||
                typeof(T) == typeof(float))
             {
-                var number = Convert.ToInt32(data);
-                AppendInt32(number);
+                var number = Convert.ToInt32(data) * scale;
+                AppendInt32(Convert.ToInt32(number));
                 return;
             }
 
             throw new TypeAccessException();
         }
 
-        public void AppendData<T>(T data, float scale)
+        public void AppendHalf<T>(T data, float scale = 0)
         {
             if(data == null) throw new ArgumentNullException("data");
-            var number = Convert.ToInt32(data);
-            AppendData(number * scale);
+
+            if (typeof(T) == typeof(float))
+            {
+                var number = Convert.ToInt16(data);
+                AppendInt16(number);
+                return;
+            }
+
+            throw new TypeAccessException();
+        }
+
+        public void AppendHalf<T>(T[] data, uint size, float scale = 0)
+        {
+            if(data == null) throw new ArgumentNullException("data");
+
+            for (int i = 0; i < size; i++)
+            {
+                AppendHalf(data[i], scale);
+            }
         }
 
         public void Clear()
@@ -70,9 +94,7 @@ namespace VescNET.Infra
 
         public T GetData<T>(ref int index, float scale = 0)
         {
-            if (typeof(T) == typeof(byte) || 
-                
-                typeof(T) == typeof(bool))
+            if (typeof(T) == typeof(byte) || typeof(T) == typeof(bool))
             {
                 return (T)Convert.ChangeType(_data[index++], typeof(T));
             }
@@ -94,6 +116,17 @@ namespace VescNET.Infra
                 number += _data[index++] << 8;
                 number += _data[index++];
                 return Scale<T>(number, scale);
+            }
+
+            if (typeof(T) == typeof(string))
+            {
+                var text = System.Text.Encoding.ASCII.GetString(_data);
+                text = text.Split('\0')[0];
+                for (int i = 0; i < _data.Length; i++)
+                {
+                    _data[i] = 0;
+                }
+                return (T)Convert.ChangeType(text, typeof(T));
             }
 
             throw new TypeAccessException();
@@ -130,6 +163,26 @@ namespace VescNET.Infra
                 data[i] = GetHalf<T>(ref index, scale);
             }
             return data;
+        }
+
+        override public string ToString()
+        {
+            return BitConverter.ToString(_data); 
+        }
+
+        private void AppendText(string text)
+        {
+            var data = System.Text.Encoding.ASCII.GetBytes(text);
+            for (int i = 0; i < data.Length; i++)
+            {
+                _data[idx++] = data[i];
+            }
+        }
+
+        private void AppendInt16(int value)
+        {
+            _data[idx++] = (byte)(value >> 8);
+            _data[idx++] = (byte)(value);
         }
 
         private void AppendInt32(int value)

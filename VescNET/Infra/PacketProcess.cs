@@ -82,27 +82,27 @@ namespace VescNET.Infra
                 // case CommPacketId.TerminalCmd:
                 //     OnTerminalCmd(buffer);
                 //     break;
-                //case CommPacketId.Print:
-                //    OnPrint(buffer);
-                //    break;
-                //case CommPacketId.RotorPosition:
-                //    OnRotorPosition(buffer);
-                //    break;
+                case CommPacketId.Print:
+                    OnPrint(buffer);
+                    break;
+                case CommPacketId.RotorPosition:
+                    OnRotorPosition(buffer);
+                    break;
                 //case CommPacketId.ExperimentSample:
                 //    OnExperimentSample(buffer);
                 //    break;
-                //case CommPacketId.DetectMotorParam:
-                //    OnDetectMotorParam(buffer);
-                //    break;
+                case CommPacketId.DetectMotorParam:
+                    OnDetectMotorParam(buffer);
+                    break;
                 // case CommPacketId.DetectMotorRL:
                 //     OnDetectMotorRL(buffer);
                 //     break;
                 // case CommPacketId.DetectMotorFluxLinkage:
                 //     OnDetectMotorFluxLinkage(buffer);
                 //     break;
-                // case CommPacketId.DetectEncoder:
-                //     OnDetectEncoder(buffer);
-                //     break;
+                case CommPacketId.DetectEncoder:
+                    OnDetectEncoder(buffer);
+                    break;
                 // case CommPacketId.DetectHallFoc:
                 //     OnDetectHallFoc(buffer);
                 //     break;
@@ -137,6 +137,7 @@ namespace VescNET.Infra
                     throw new InvalidDataException("DataType: " + _recv.PacketId);
             }
 
+            buffer.Clear();
             return _recv;
         }
 
@@ -214,6 +215,7 @@ namespace VescNET.Infra
                 case CommPacketId.TerminalCmd:
                     break;
                 case CommPacketId.Print:
+                    Console.WriteLine(data.Data);
                     break;
                 case CommPacketId.RotorPosition:
                     break;
@@ -312,17 +314,24 @@ namespace VescNET.Infra
 
         private void OnPrint(IBuffer buffer)
         {
-            foreach (byte b in buffer.Data)
-            {
-                Console.Write(b.ToString("X2") + " ");
-            }
-            Console.WriteLine();
+            int ind = 1;
+            _recv.Data = buffer.GetData<string>(ref ind);
         }
 
         private void OnRotorPosition(IBuffer buffer)
         {
-            int ind = 0;
+            int ind = 1;
             var data = buffer.GetData<float>(ref ind, 100000.0f);
+            _recv.Data = data;
+        }
+
+        private void OnDetectEncoder(IBuffer buffer)
+        {
+            var ind = 1;
+            var data = new DetectEncoderResult();
+            data.Offset = buffer.GetData<float>(ref ind, 1e6f);
+            data.Ratio = buffer.GetData<float>(ref ind, 1e6f);
+            data.Inverted = buffer.GetData<bool>(ref ind);
             _recv.Data = data;
         }
 
@@ -724,13 +733,12 @@ namespace VescNET.Infra
             data.ImuConf.RotYaw = buffer.GetData<float>(ref ind);
             data.ImuConf.AccelOffsets = buffer.GetData<float>(ref ind, 3);
             data.ImuConf.GyroOffsets = buffer.GetData<float>(ref ind, 3);
-
-            Console.WriteLine("Test");
+            _recv.Data = data;
         }
 
         void OnDetectMotorParam(IBuffer buffer) 
         {
-            var ind = 0;
+            var ind = 1;
             var data = new DetectedMotorParams();
             data.CycleIntLimit = buffer.GetData<float>(ref ind, 1000.0f);
             data.CouplingK = buffer.GetData<float>(ref ind, 1000.0f);

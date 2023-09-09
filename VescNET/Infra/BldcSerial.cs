@@ -11,6 +11,8 @@ namespace VescNET.Infra
 
         private readonly SerialPort serial;
 
+        public bool Connected => serial.IsOpen;
+
         public event EventHandler<ReceivedData> OnData;
 
         public BldcSerial(IPacket packet, SerialPort serial)
@@ -34,8 +36,11 @@ namespace VescNET.Infra
 
         public void Send(IBuffer buffer)
         {
-            var result = packet.ProcessTX(buffer.Data);
-            serial.Write(result, 0, result.Length);
+            if(Connected)
+            {
+                var result = packet.ProcessTX(buffer.Data);
+                serial.Write(result, 0, result.Length);
+            }
         }
     }
 }

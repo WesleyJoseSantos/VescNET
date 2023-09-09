@@ -4,6 +4,8 @@ namespace VescNET.Domain.Interfaces
 {
     public interface IBldc
     {
+        bool Connected { get; }
+
         void GetFwVersion();
         void GetValues();
         void GetMcconf();
@@ -11,7 +13,6 @@ namespace VescNET.Domain.Interfaces
         void GetAppconf();
         void GetAppconfDefault();
 
-        void TerminalCmd(string cmd);
         void SetDutyCycle(float dutyCycle);
         void SetCurrent(float current);
         void SetCurrentBrake(float current);
@@ -21,5 +22,9 @@ namespace VescNET.Domain.Interfaces
         void SetServoPos(float pos);
         void SetMcconf(McConfiguration mcconf);
         void SetAppconf(AppConfiguration appconf);
+
+        void DetectEncoder(float current);
+
+        void TerminalCmd(string cmd);
     }
 }

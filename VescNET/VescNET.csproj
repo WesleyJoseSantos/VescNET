@@ -53,6 +53,7 @@
     <Compile Include="Domain\DTOs\DecodedADC.cs" />
     <Compile Include="Domain\DTOs\DecodedPPM.cs" />
     <Compile Include="Domain\DTOs\DetectedMotorParams.cs" />
+    <Compile Include="Domain\DTOs\DetectEncoderResult.cs" />
     <Compile Include="Domain\DTOs\DeviceInfo.cs" />
     <Compile Include="Domain\DTOs\ImuConfig.cs" />
     <Compile Include="Domain\DTOs\McConfiguration.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Domain\Enums\CanBaud.cs" />
     <Compile Include="Domain\Enums\ChuckControlType.cs" />
     <Compile Include="Domain\Enums\CommPacketId.cs" />
+    <Compile Include="Domain\Enums\ConsoleCmds.cs" />
     <Compile Include="Domain\Enums\Drv8301OcMode.cs" />
     <Compile Include="Domain\Enums\ImuFilter.cs" />
     <Compile Include="Domain\Enums\ImuType.cs" />
@@ -90,12 +92,14 @@
     <Compile Include="Domain\Interfaces\IPacket.cs" />
     <Compile Include="Domain\Interfaces\IBuffer.cs" />
     <Compile Include="Domain\Interfaces\IPacketProcess.cs" />
+    <Compile Include="Domain\Interfaces\ITerminalCmd.cs" />
     <Compile Include="Infra\Bldc.cs" />
     <Compile Include="Infra\BldcSerial.cs" />
     <Compile Include="Infra\Buffer.cs" />
     <Compile Include="Infra\CRC16.cs" />
     <Compile Include="Infra\Packet.cs" />
     <Compile Include="Infra\PacketProcess.cs" />
+    <Compile Include="Infra\TerminalCmd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

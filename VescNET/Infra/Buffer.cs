@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Reflection;
-using VescNET.Domain.Enums;
 using VescNET.Domain.Interfaces;
 
 namespace VescNET.Infra
@@ -34,143 +31,177 @@ namespace VescNET.Infra
             _data = data;
         }
 
-        public void AppendData<T>(T data, float scale = 1)
+        public void AppendData<T>(T data, float scale = 0.0f, bool half = false)
         {
-            if(data == null) throw new ArgumentNullException("data");
+            if (data == null) throw new ArgumentNullException("data");
 
-            if(typeof(T) == typeof(string))
+            if (typeof(T) == typeof(byte) || typeof(T) == typeof(bool) || data.GetType().IsEnum)
             {
-                AppendText(data as string);
-            }
-
-            if (typeof(T) == typeof(byte) ||
-                typeof(T) == typeof(CommPacketId))
-            {
-                dynamic number = data;
-                _data[idx++] = (byte)number;
+                AppendByte(data);
                 return;
             }
 
-            if (typeof(T) == typeof(uint) ||
-               typeof(T) == typeof(int) ||
-               typeof(T) == typeof(float))
+            if (typeof(T) == typeof(ushort) || typeof(T) == typeof(short))
             {
-                var number = Convert.ToInt32(data) * scale;
-                AppendInt32(Convert.ToInt32(number));
+                AppendWord(data);
+                return;
+            }
+
+            if (typeof(T) == typeof(uint) || typeof(T) == typeof(int))
+            {
+                AppendDWord(data);
+                return;
+            }
+
+            if (typeof(T) == typeof(float) && half == true)
+            {
+                AppendFloat16(data, scale); 
+                return;
+            }
+
+            if (typeof(T) == typeof(float) && half == false)
+            {
+                AppendFloat32(data, scale);
+                return;
+            }
+
+            if (typeof(T) == typeof(string))
+            {
+                AppendString(data as string);
+                return;
+            }
+
+            if (data.GetType().IsArray)
+            {
+                AppendArray(data, scale, half);
                 return;
             }
 
             throw new TypeAccessException();
         }
 
-        public void AppendHalf<T>(T data, float scale = 0)
+        public T GetData<T>(ref int idx, float scale = 0.0f, bool half = false)
         {
-            if(data == null) throw new ArgumentNullException("data");
+            if (typeof(T) == typeof(byte) || typeof(T) == typeof(bool) || typeof(T).IsEnum)
+            {
+                return (T)Convert.ChangeType(GetByte(ref idx), typeof(T));
+            }
+
+            if (typeof(T) == typeof(ushort) || typeof(T) == typeof(short))
+            {
+                return (T)Convert.ChangeType(GetWord(ref idx), typeof(T));
+            }
+
+            if (typeof(T) == typeof(uint) || typeof(T) == typeof(int))
+            {
+                return (T)Convert.ChangeType(GetDWord(ref idx), typeof(T));
+            }
 
             if (typeof(T) == typeof(float))
             {
-                var number = Convert.ToInt16(data);
-                AppendInt16(number);
-                return;
+                var value = half ? GetFloat16(ref idx, scale) : GetFloat32(ref idx, scale);
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+
+            if (typeof(T) == typeof(string))
+            {
+                return (T)Convert.ChangeType(GetString(), typeof(T));
             }
 
             throw new TypeAccessException();
         }
 
-        public void AppendHalf<T>(T[] data, uint size, float scale = 0)
+        public T[] GetData<T>(ref int idx, uint size, float scale = 0.0f, bool half = false)
         {
-            if(data == null) throw new ArgumentNullException("data");
-
-            for (int i = 0; i < size; i++)
-            {
-                AppendHalf(data[i], scale);
-            }
+            var data = GetArray<T>(ref idx, scale, half, size);
+            return (T[])Convert.ChangeType(data, typeof(T[]));
         }
 
         public void Clear()
         {
             idx = 0;
-        }
-
-        public T GetData<T>(ref int index, float scale = 0)
-        {
-            if (typeof(T) == typeof(byte) || typeof(T) == typeof(bool))
+            for (int i = 0; i < _data.Length; i++)
             {
-                return (T)Convert.ChangeType(_data[index++], typeof(T));
+                _data[i] = 0;
             }
-
-            if (typeof(T) == typeof(ushort) || typeof(T) == typeof(short))
-            {
-                var number = _data[index++] << 8;
-                number += _data[index++];
-                return Scale<T>(number, scale);
-            }
-
-            if (typeof(T) == typeof(CommPacketId) ||
-               typeof(T) == typeof(uint) ||
-               typeof(T) == typeof(int) ||
-               typeof(T) == typeof(float))
-            {
-                var number = _data[index++] << 24;
-                number += _data[index++] << 16;
-                number += _data[index++] << 8;
-                number += _data[index++];
-                return Scale<T>(number, scale);
-            }
-
-            if (typeof(T) == typeof(string))
-            {
-                var text = System.Text.Encoding.ASCII.GetString(_data);
-                text = text.Split('\0')[0];
-                for (int i = 0; i < _data.Length; i++)
-                {
-                    _data[i] = 0;
-                }
-                return (T)Convert.ChangeType(text, typeof(T));
-            }
-
-            throw new TypeAccessException();
-        }
-
-        public T GetHalf<T>(ref int index, float scale = 0)
-        {
-            // TODO: implement 16 bits negative floats
-            if(typeof(T) == typeof(float))
-            {
-                var number = _data[index++] << 8;
-                number += _data[index++];
-                return Scale<T>(number, scale);
-            }
-
-            throw new TypeAccessException();
-        }
-
-        public T[] GetData<T>(ref int index, uint size, float scale = 0)
-        {
-            var data = new T[size];
-            for (int i = 0; i < size; i++)
-            {
-                data[i] = GetData<T>(ref index, scale);
-            }
-            return data;
-        }
-
-        public T[] GetHalf<T>(ref int index, uint size, float scale = 0)
-        {
-            var data = new T[size];
-            for (int i = 0; i < size; i++)
-            {
-                data[i] = GetHalf<T>(ref index, scale);
-            }
-            return data;
         }
 
         override public string ToString()
         {
-            return BitConverter.ToString(_data); 
+            return BitConverter.ToString(_data);
         }
 
-        private void AppendText(string text)
+        private void AppendByte(dynamic data)
+        {
+            _data[idx++] = Convert.ToByte(data);
+        }
+
+        private byte GetByte(ref int idx)
+        {
+            return _data[idx++];
+        }
+
+        private void AppendWord(dynamic data)
+        {
+            var number = Convert.ToUInt32(data);
+            _data[idx++] = (byte)(number >> 8);
+            _data[idx++] = (byte)(number);
+        }
+
+        private int GetWord(ref int idx)
+        {
+            var number = _data[idx++] << 8;
+            number += _data[idx++];
+            return number;
+        }
+
+        private void AppendDWord(dynamic data)
+        {
+            var number = Convert.ToUInt32(data);
+            _data[idx++] = (byte)(number >> 24);
+            _data[idx++] = (byte)(number >> 16);
+            _data[idx++] = (byte)(number >> 8);
+            _data[idx++] = (byte)(number);
+        }
+
+        private uint GetDWord(ref int idx)
+        {
+            var number = (_data[idx++] << 24);
+            number += (_data[idx++] << 16);
+            number += (_data[idx++] << 8);
+            number += _data[idx++];
+            return (uint)number;
+        }
+
+        private void AppendFloat16(dynamic data, float scale)
+        {
+            if(scale == 0) data = AppendAutoScale(data);
+            else data = data * scale;
+            AppendWord(data);
+        }
+
+        private float GetFloat16(ref int idx, float scale)
+        {
+            var number = GetWord(ref idx);
+            if (scale == 0) return GetAutoScale((uint)number);
+            else return number / scale;
+        }
+
+        private void AppendFloat32(dynamic data, float scale)
+        {
+            if (scale == 0) data = AppendAutoScale(data);
+            else data = data * scale;
+            AppendDWord(data);
+        }
+
+        private float GetFloat32(ref int idx, float scale)
+        {
+            var number = GetDWord(ref idx);
+            if (scale == 0) return GetAutoScale(number);
+            else return number / scale;
+        }
+
+        private void AppendString(string text)
         {
             var data = System.Text.Encoding.ASCII.GetBytes(text);
             for (int i = 0; i < data.Length; i++)
@@ -179,44 +210,37 @@ namespace VescNET.Infra
             }
         }
 
-        private void AppendInt16(int value)
+        private string GetString()
         {
-            _data[idx++] = (byte)(value >> 8);
-            _data[idx++] = (byte)(value);
+            var text = System.Text.Encoding.ASCII.GetString(_data);
+            text = text.Split('\0')[0];
+            for (int i = 0; i < _data.Length; i++)
+            {
+                _data[i] = 0;
+            }
+            return text;
         }
 
-        private void AppendInt32(int value)
+        private void AppendArray(dynamic data, float scale, bool half)
         {
-            _data[idx++] = (byte)(value >> 24);
-            _data[idx++] = (byte)(value >> 16);
-            _data[idx++] = (byte)(value >> 8);
-            _data[idx++] = (byte)(value);
+            for (int i = 0; i < data.Length; i++)
+            {
+                AppendData(data[i], scale, half);
+            }
+            return;
         }
 
-        private T Scale<T>(int number, float scale = 0)
+        private dynamic GetArray<T>(ref int idx, float scale, bool half, uint size)
         {
-            if(typeof(T) == typeof(uint))
+            var array = new T[size];
+            for (int i = 0; i < size; i++)
             {
-                var scaledNumber = (uint)number;
-                return (T)Convert.ChangeType(scaledNumber, typeof(T));
+                array[i] = GetData<T>(ref idx, scale, half);
             }
-            else if (typeof(T) == typeof(float) && scale == 0)
-            {
-                var scaledNumber = FloatAutoScale((uint)number);
-                return (T)Convert.ChangeType(scaledNumber, typeof(T));
-            }
-            else if (scale != 0)
-            {
-                var scaledNumber = Convert.ToSingle(number) / scale;
-                return (T)Convert.ChangeType(scaledNumber, typeof(T));
-            }
-            else
-            {
-                return (T)Convert.ChangeType(number, typeof(T));
-            }
+            return array;
         }
 
-        static float FloatAutoScale(uint res)
+        private float GetAutoScale(uint res)
         {
             int e = (int)((res >> 23) & 0xFF);
             uint sig_i = res & 0x7FFFFF;
@@ -236,5 +260,36 @@ namespace VescNET.Infra
 
             return (float)(sig * Math.Pow(2, e));
         }
+
+        private uint AppendAutoScale(float number)
+        {
+            if(Math.Abs(number) < 1.5e-38)
+            {
+                number = 0.0f;
+            }
+
+            var result = FRexp.Calc(number);
+            int e = result.exponent;
+            float sig = (float)result.mantissa;
+
+
+            float sigAbs = (float)Math.Abs(sig);
+            uint sigInt = 0;
+
+            if (sigAbs >= 0.5)
+            {
+                sigInt = (uint)((sigAbs - 0.5f) * 2.0f * 8388608.0f);
+                e += 126;
+            }
+
+            var res = (uint)(((e & 0xFF) << 23) | (sigInt & 0x7FFFFF));
+            if (sig < 0)
+            {
+                res |= 1U << 31;
+            }
+
+            return res;
+        }
+
     }
 }

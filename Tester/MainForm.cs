@@ -55,6 +55,11 @@ namespace Tester
                     Log($"Encoder Offset: {encoder.Offset}");
                     Log($"Encoder Ratio: {encoder.Ratio}");
                     Log($"Encoder Inverted: {encoder.Inverted}");
+                    Log($"Send mcConf to apply the encoder calibration!");
+                    var mcConf = propertyGridMcconf.SelectedObject as McConfiguration;
+                    mcConf.FocEncoderOffset = encoder.Offset;
+                    mcConf.FocEncoderRatio = encoder.Ratio;
+                    mcConf.FocEncoderInverted = encoder.Inverted;
                     break;
             }
         }
@@ -76,6 +81,7 @@ namespace Tester
                     if (serial.IsOpen)
                     {
                         buttonConnect.Text = "Disconnect";
+                        bldc.GetMcconf();
                     }
                 }
             }

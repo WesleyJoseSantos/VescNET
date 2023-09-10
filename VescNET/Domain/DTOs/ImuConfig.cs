@@ -16,7 +16,7 @@ namespace VescNET.Domain.DTOs
         public float AccelLowpassFilterY { get; set; }
         public float AccelLowpassFilterZ { get; set; }
         public float GyroLowpassFilter { get; set; }
-        public int SampleRateHz { get; set; }
+        public ushort SampleRateHz { get; set; }
         public bool UseMagnetometer { get; set; }
         public float AccelConfidenceDecay { get; set; }
         public float MahonyKp { get; set; }

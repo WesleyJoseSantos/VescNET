@@ -12,6 +12,9 @@ namespace VescNET.Infra
         private ReceivedData _recv;
         private uint _payloadLenght;
 
+        public const uint McConfSignature = 1412559730;
+        public const uint AppConfSignature = 3733512279;
+
         public PacketProcess()
         {
             _recv = new ReceivedData();
@@ -62,9 +65,9 @@ namespace VescNET.Infra
                 // case CommPacketId.SetServoPos:
                 //     OnSetServoPos(buffer);
                 //     break;
-                //case CommPacketId.SetMcConf:
-                //    // This is a confirmation that the new mcconf is received.
-                //    break;
+                case CommPacketId.SetMcConf:
+                    // This is a confirmation that the new mcconf is received.
+                    break;
                 case CommPacketId.GetMcConf:
                 case CommPacketId.GetMcConfDefault:
                     OnGetMcConf(buffer);
@@ -259,12 +262,12 @@ namespace VescNET.Infra
             var data = new DeviceInfo();
             int ind = 1;
 
-            byte[] firmware = buffer.GetData<byte>(ref ind, 2);
-            byte[] hardware = buffer.GetData<byte>(ref ind, 3);
+            byte[] firmware = buffer.GetData<byte>(ref ind, 2, 0.0f, false);
+            byte[] hardware = buffer.GetData<byte>(ref ind, 3, 0.0f, false);
 
             data.FirmwareVersion = $"{firmware[0]}.{firmware[1]}";
             data.HardwareVersion = Encoding.ASCII.GetString(hardware).Trim();
-            data.Uuid = buffer.GetData<byte>(ref ind, 12);
+            data.Uuid = buffer.GetData<byte>(ref ind, 12, 0.0f, false);
 
             _recv.Data = data;
         }
@@ -274,15 +277,15 @@ namespace VescNET.Infra
             McValues data = new McValues();
             int ind = 1;
 
-            data.TempMos = buffer.GetHalf<float>(ref ind, 1e1f);
-            data.TempMotor = buffer.GetHalf<float>(ref ind, 1e1f);
+            data.TempMos = buffer.GetData<float>(ref ind, 1e1f, true);
+            data.TempMotor = buffer.GetData<float>(ref ind, 1e1f, true);
             data.CurrentMotor = buffer.GetData<float>(ref ind, 1e2f);
             data.CurrentIn = buffer.GetData<float>(ref ind, 1e2f);
             data.Id = buffer.GetData<float>(ref ind, 1e2f);
             data.Iq = buffer.GetData<float>(ref ind, 1e2f);
-            data.DutyNow = buffer.GetHalf<float>(ref ind, 1e3f);
+            data.DutyNow = buffer.GetData<float>(ref ind, 1e3f, true);
             data.Rpm = buffer.GetData<float>(ref ind, 1e0f);
-            data.VIn = buffer.GetHalf<float>(ref ind, 1e1f);
+            data.VIn = buffer.GetData<float>(ref ind, 1e1f, true);
             data.AmpHours = buffer.GetData<float>(ref ind, 1e4f);
             data.AmpHoursCharged = buffer.GetData<float>(ref ind, 1e4f);
             data.WattHours = buffer.GetData<float>(ref ind, 1e4f);
@@ -341,6 +344,10 @@ namespace VescNET.Infra
             var data = new McConfiguration();
 
             var mcConfSignature = buffer.GetData<uint>(ref ind);
+            if(mcConfSignature != McConfSignature)
+            {
+                throw new InvalidDataException("Invalid data signature");
+            }
 
             data.PwmMode = (McPwmMode)buffer.GetData<byte>(ref ind);
             data.CommMode = (McCommMode)buffer.GetData<byte>(ref ind);
@@ -354,7 +361,7 @@ namespace VescNET.Infra
             data.LAbsCurrentMax = buffer.GetData<float>(ref ind);
             data.LMinErpm = buffer.GetData<float>(ref ind);
             data.LMaxErpm = buffer.GetData<float>(ref ind);
-            data.LErpmStart = buffer.GetHalf<float>(ref ind, 10000f);
+            data.LErpmStart = buffer.GetData<float>(ref ind, 10000f, true);
             data.LMaxErpmFbrake = buffer.GetData<float>(ref ind);
             data.LMaxErpmFbrakeCc = buffer.GetData<float>(ref ind);
             data.LMinVin = buffer.GetData<float>(ref ind);
@@ -362,29 +369,29 @@ namespace VescNET.Infra
             data.LBatteryCutStart = buffer.GetData<float>(ref ind);
             data.LBatteryCutEnd = buffer.GetData<float>(ref ind);
             data.LSlowAbsCurrent = buffer.GetData<bool>(ref ind);
-            data.LTempFetStart = buffer.GetHalf<float>(ref ind, 1.0f);
-            data.LTempFetEnd = buffer.GetHalf<float>(ref ind, 1.0f);
-            data.LTempMotorStart = buffer.GetHalf<float>(ref ind, 1.0f);
-            data.LTempMotorEnd = buffer.GetHalf<float>(ref ind, 1.0f);
-            data.LTempAccelDec = buffer.GetHalf<float>(ref ind, 1.0f);
-            data.LMinDuty = buffer.GetHalf<float>(ref ind, 1.0f);
-            data.LMaxDuty = buffer.GetHalf<float>(ref ind, 1.0f);
+            data.LTempFetStart = buffer.GetData<float>(ref ind, 1.0f, true);
+            data.LTempFetEnd = buffer.GetData<float>(ref ind, 1.0f, true);
+            data.LTempMotorStart = buffer.GetData<float>(ref ind, 1.0f, true);
+            data.LTempMotorEnd = buffer.GetData<float>(ref ind, 1.0f, true);
+            data.LTempAccelDec = buffer.GetData<float>(ref ind, 1.0f, true);
+            data.LMinDuty = buffer.GetData<float>(ref ind, 1.0f, true);
+            data.LMaxDuty = buffer.GetData<float>(ref ind, 1.0f, true);
             data.LWattMax = buffer.GetData<float>(ref ind);
             data.LWattMin = buffer.GetData<float>(ref ind);
 
-            data.LCurrentMaxScale = buffer.GetHalf<float>(ref ind, 10000f);
-            data.LCurrentMinScale = buffer.GetHalf<float>(ref ind, 10000f);
-            data.LDutyStart = buffer.GetHalf<float>(ref ind, 10000f);
+            data.LCurrentMaxScale = buffer.GetData<float>(ref ind, 10000f, true);
+            data.LCurrentMinScale = buffer.GetData<float>(ref ind, 10000f, true);
+            data.LDutyStart = buffer.GetData<float>(ref ind, 10000f, true);
 
             data.SlMinErpm = buffer.GetData<float>(ref ind);
             data.SlMinErpmCycleIntLimit = buffer.GetData<float>(ref ind);
             data.SlMaxFullbreakCurrentDirChange = buffer.GetData<float>(ref ind);
-            data.SlCycleIntLimit = buffer.GetHalf<float>(ref ind, 10f);
-            data.SlPhaseAdvanceAtBr = buffer.GetHalf<float>(ref ind, 10000f);
+            data.SlCycleIntLimit = buffer.GetData<float>(ref ind, 10f, true);
+            data.SlPhaseAdvanceAtBr = buffer.GetData<float>(ref ind, 10000f, true);
             data.SlCycleIntRpmBr = buffer.GetData<float>(ref ind);
             data.SlBemfCouplingK = buffer.GetData<float>(ref ind);
 
-            data.HallTable = buffer.GetData<byte>(ref ind, 8);
+            data.HallTable = buffer.GetData<byte>(ref ind, 8, 0.0f, false);
 
             data.HallSlErpm = buffer.GetData<float>(ref ind);
             data.FocCurrentKp = buffer.GetData<float>(ref ind);
@@ -410,28 +417,28 @@ namespace VescNET.Infra
             data.FocMotorFluxLinkage = buffer.GetData<float>(ref ind);
             data.FocObserverGain = buffer.GetData<float>(ref ind);
             data.FocObserverGainSlow = buffer.GetData<float>(ref ind);
-            data.FocObserverOffset = buffer.GetHalf<float>(ref ind, 1f);
+            data.FocObserverOffset = buffer.GetData<float>(ref ind, 1f, true);
             data.FocDutyDowmrampKp = buffer.GetData<float>(ref ind);
             data.FocDutyDowmrampKi = buffer.GetData<float>(ref ind);
             data.FocOpenloopRpm = buffer.GetData<float>(ref ind);
-            data.FocOpenloopRpmLow = buffer.GetHalf<float>(ref ind, 1000f);
+            data.FocOpenloopRpmLow = buffer.GetData<float>(ref ind, 1000f, true);
             data.FocDGainScaleStart = buffer.GetData<float>(ref ind);
             data.FocDGainScaleMaxMod = buffer.GetData<float>(ref ind);
-            data.FocSlOpenloopHyst = buffer.GetHalf<float>(ref ind, 100f);
-            data.FocSlOpenloopTimeLock = buffer.GetHalf<float>(ref ind, 100f);
-            data.FocSlOpenloopTimeRamp = buffer.GetHalf<float>(ref ind, 100f);
-            data.FocSlOpenloopTime = buffer.GetHalf<float>(ref ind, 100f);
+            data.FocSlOpenloopHyst = buffer.GetData<float>(ref ind, 100f, true);
+            data.FocSlOpenloopTimeLock = buffer.GetData<float>(ref ind, 100f, true);
+            data.FocSlOpenloopTimeRamp = buffer.GetData<float>(ref ind, 100f, true);
+            data.FocSlOpenloopTime = buffer.GetData<float>(ref ind, 100f, true);
 
-            data.FocHallTable = buffer.GetData<byte>(ref ind, 8);
+            data.FocHallTable = buffer.GetData<byte>(ref ind, 8, 0.0f, false);
             data.FocHallInterpErpm = buffer.GetData<float>(ref ind);
 
             data.FocSlErpm = buffer.GetData<float>(ref ind);
             data.FocSampleV0V7 = buffer.GetData<bool>(ref ind);
             data.FocSampleHighCurrent = buffer.GetData<bool>(ref ind);
-            data.FocSatComp = buffer.GetHalf<float>(ref ind, 1000f);
+            data.FocSatComp = buffer.GetData<float>(ref ind, 1000f, true);
             data.FocTempComp = buffer.GetData<bool>(ref ind);
-            data.FocTempCompBaseTemp = buffer.GetHalf<float>(ref ind, 100f);
-            data.FocCurrentFilterConst = buffer.GetHalf<float>(ref ind, 10000f);
+            data.FocTempCompBaseTemp = buffer.GetData<float>(ref ind, 100f, true);
+            data.FocCurrentFilterConst = buffer.GetData<float>(ref ind, 10000f, true);
 
             data.FocCcDecoupling = buffer.GetData<byte>(ref ind);
             data.FocObserverType = buffer.GetData<byte>(ref ind);
@@ -447,22 +454,22 @@ namespace VescNET.Infra
             data.FocOffsetsCalOnBoot = buffer.GetData<byte>(ref ind);
 
             data.FocOffsetsCurrent = buffer.GetData<float>(ref ind, 3);
-            data.FocOffsetsVoltage = buffer.GetHalf<float>(ref ind, 3, 10000f);
-            data.FocOffsetsVoltageUndriven = buffer.GetHalf<float>(ref ind, 3, 10000f);
+            data.FocOffsetsVoltage = buffer.GetData<float>(ref ind, 3, 10000f, true);
+            data.FocOffsetsVoltageUndriven = buffer.GetData<float>(ref ind, 3, 10000f, true);
             
             data.FocPhaseFilterEnable = buffer.GetData<bool>(ref ind);
             //data.FocPhaseFilterDisableFault = buffer.GetData<bool>(ref ind);
             data.FocPhaseFilterMaxErpm = buffer.GetData<float>(ref ind);
             data.FocMtpaMode = buffer.GetData<byte>(ref ind);
             data.FocFwCurrentMax = buffer.GetData<float>(ref ind);
-            data.FocFwDutyStart = buffer.GetHalf<float>(ref ind, 10000f);
-            data.FocFwRampTime = buffer.GetHalf<float>(ref ind, 1000f);
-            data.FocFwQCurrentFactor = buffer.GetHalf<float>(ref ind, 10000f);
+            data.FocFwDutyStart = buffer.GetData<float>(ref ind, 10000f, true);
+            data.FocFwRampTime = buffer.GetData<float>(ref ind, 1000f, true);
+            data.FocFwQCurrentFactor = buffer.GetData<float>(ref ind, 10000f, true);
             //data.FocSpeedSoure = buffer.GetData<byte>(ref ind);
 
             data.GpdBufferNotifyLeft = buffer.GetData<ushort>(ref ind);
             data.GpdBufferInterpol = buffer.GetData<ushort>(ref ind);
-            data.GpdCurrentFilterConst = buffer.GetHalf<float>(ref ind, 10000f);
+            data.GpdCurrentFilterConst = buffer.GetData<float>(ref ind, 10000f, true);
             data.GpdCurrentKp = buffer.GetData<float>(ref ind);
             data.GpdCurrentKi = buffer.GetData<float>(ref ind);
 
@@ -470,7 +477,7 @@ namespace VescNET.Infra
             data.SPidKp = buffer.GetData<float>(ref ind);
             data.SPidKi = buffer.GetData<float>(ref ind);
             data.SPidKd = buffer.GetData<float>(ref ind);
-            data.SPidKdFilter = buffer.GetHalf<float>(ref ind, 10000f);
+            data.SPidKdFilter = buffer.GetData<float>(ref ind, 10000f, true);
             data.SPidMinErpm = buffer.GetData<float>(ref ind);
             data.SPidAllowBraking = buffer.GetData<bool>(ref ind);
             data.SPidRampErpmsS = buffer.GetData<float>(ref ind);
@@ -481,7 +488,7 @@ namespace VescNET.Infra
             data.PPidKdProc = buffer.GetData<float>(ref ind);
             data.PPidKdFilter = buffer.GetData<float>(ref ind);
             data.PPidAngDiv = buffer.GetData<float>(ref ind);
-            data.PPidGainDecAngle = buffer.GetHalf<float>(ref ind, 10f);
+            data.PPidGainDecAngle = buffer.GetData<float>(ref ind, 10f, true);
             data.PPidOffset = buffer.GetData<float>(ref ind);
 
             data.CcStartupBoostDuty = buffer.GetData<float>(ref ind);
@@ -510,8 +517,8 @@ namespace VescNET.Infra
             data.MOutAuxMode = (OutAuxMode)buffer.GetData<byte>(ref ind);
             data.MMotorTempSensType = (TempSensorType)buffer.GetData<byte>(ref ind);
             data.MPtcMotorCoeff = buffer.GetData<float>(ref ind);
-            data.MNtcxPtcxRes = buffer.GetHalf<float>(ref ind, 0f);
-            data.MNtcxPtcxTempBase = buffer.GetHalf<float>(ref ind, 10f);
+            data.MNtcxPtcxRes = buffer.GetData<float>(ref ind, 0f, true);
+            data.MNtcxPtcxTempBase = buffer.GetData<float>(ref ind, 10f, true);
             data.MHallExtraSamples = buffer.GetData<byte>(ref ind);
             //data.MBattFilterConst = buffer.GetData<byte>(ref ind);
 
@@ -525,10 +532,10 @@ namespace VescNET.Infra
 
             data.Bms.Type = (BmsType)buffer.GetData<byte>(ref ind);
             //data.Bms.LimitMode = buffer.GetData<byte>(ref ind);
-            data.Bms.TLimitStart = buffer.GetHalf<float>(ref ind, 100f);
-            data.Bms.TLimitEnd = buffer.GetHalf<float>(ref ind, 100f);
-            data.Bms.SocLimitStart = buffer.GetHalf<float>(ref ind, 1000f);
-            data.Bms.SocLimitEnd = buffer.GetHalf<float>(ref ind, 1000f);
+            data.Bms.TLimitStart = buffer.GetData<float>(ref ind, 100f, true);
+            data.Bms.TLimitEnd = buffer.GetData<float>(ref ind, 100f, true);
+            data.Bms.SocLimitStart = buffer.GetData<float>(ref ind, 1000f, true);
+            data.Bms.SocLimitEnd = buffer.GetData<float>(ref ind, 1000f, true);
             data.Bms.FwdCanMode = (BmsFwdCanMode)buffer.GetData<byte>(ref ind);
 
             _recv.Data = data;
@@ -540,6 +547,10 @@ namespace VescNET.Infra
             var data = new AppConfiguration();
 
             var appSignature = buffer.GetData<uint>(ref ind);
+            if (appSignature != AppConfSignature)
+            {
+                throw new InvalidDataException("Invalid data signature");
+            }
 
             data.ControllerId = buffer.GetData<byte>(ref ind);
             data.TimeoutMsec = buffer.GetData<uint>(ref ind);
@@ -579,7 +590,7 @@ namespace VescNET.Infra
             data.PpmConf.MultiEsc = buffer.GetData<bool>(ref ind);
             data.PpmConf.Tc = buffer.GetData<bool>(ref ind);
             data.PpmConf.TcMaxDiff = buffer.GetData<float>(ref ind);
-            data.PpmConf.MaxErpmForDir = buffer.GetHalf<float>(ref ind, 1f);
+            data.PpmConf.MaxErpmForDir = buffer.GetData<float>(ref ind, 1f, true);
             data.PpmConf.SmartRevMaxDuty = buffer.GetData<float>(ref ind);
             data.PpmConf.SmartRevRamptime = buffer.GetData<float>(ref ind);
 
@@ -629,7 +640,7 @@ namespace VescNET.Infra
             data.NrfConf.RetryDelay = (NrfRetrDelay)buffer.GetData<byte>(ref ind);
             data.NrfConf.Retries = buffer.GetData<byte>(ref ind);
             data.NrfConf.Channel = buffer.GetData<byte>(ref ind);
-            data.NrfConf.Address = buffer.GetData<byte>(ref ind, 3);
+            data.NrfConf.Address = buffer.GetData<byte>(ref ind, 3, 0.0f, false);
             // data.NrfConf.SendCrcAck = buffer.GetData<bool>(ref ind);
 
             data.BalanceConf.PidMode = (BalancePidMode)buffer.GetData<byte>(ref ind);
@@ -653,21 +664,21 @@ namespace VescNET.Infra
             data.BalanceConf.FaultDelaySwitchFull = buffer.GetData<ushort>(ref ind);
             data.BalanceConf.FaultAdcHalfErpm = buffer.GetData<ushort>(ref ind);
             //data.BalanceConf.FaultIsDualSwitch = buffer.GetData<bool>(ref ind);
-            data.BalanceConf.TiltbackDutyAngle = buffer.GetHalf<float>(ref ind, 100f);
-            data.BalanceConf.TiltbackDutySpeed = buffer.GetHalf<float>(ref ind, 100f);
-            data.BalanceConf.TiltbackDuty = buffer.GetHalf<float>(ref ind, 1000f);
-            data.BalanceConf.TiltbackHvAngle = buffer.GetHalf<float>(ref ind, 100f);
-            data.BalanceConf.TiltbackHvSpeed = buffer.GetHalf<float>(ref ind, 100f);
+            data.BalanceConf.TiltbackDutyAngle = buffer.GetData<float>(ref ind, 100f, true);
+            data.BalanceConf.TiltbackDutySpeed = buffer.GetData<float>(ref ind, 100f, true);
+            data.BalanceConf.TiltbackDuty = buffer.GetData<float>(ref ind, 1000f, true);
+            data.BalanceConf.TiltbackHvAngle = buffer.GetData<float>(ref ind, 100f, true);
+            data.BalanceConf.TiltbackHvSpeed = buffer.GetData<float>(ref ind, 100f, true);
             data.BalanceConf.TiltbackHv = buffer.GetData<float>(ref ind);
-            data.BalanceConf.TiltbackLvAngle = buffer.GetHalf<float>(ref ind, 100f);
-            data.BalanceConf.TiltbackLvSpeed = buffer.GetHalf<float>(ref ind, 100f);
+            data.BalanceConf.TiltbackLvAngle = buffer.GetData<float>(ref ind, 100f, true);
+            data.BalanceConf.TiltbackLvSpeed = buffer.GetData<float>(ref ind, 100f, true);
             data.BalanceConf.TiltbackLv = buffer.GetData<float>(ref ind);
-            data.BalanceConf.TiltbackReturnSpeed = buffer.GetHalf<float>(ref ind, 100f);
+            data.BalanceConf.TiltbackReturnSpeed = buffer.GetData<float>(ref ind, 100f, true);
             data.BalanceConf.TiltbackConstant = buffer.GetData<float>(ref ind);
             data.BalanceConf.TiltbackConstantErpm = buffer.GetData<ushort>(ref ind);
             data.BalanceConf.TiltbackVariable = buffer.GetData<float>(ref ind);
             data.BalanceConf.TiltbackVariableMax = buffer.GetData<float>(ref ind);
-            data.BalanceConf.NoseanglingSpeed = buffer.GetHalf<float>(ref ind, 100f);
+            data.BalanceConf.NoseanglingSpeed = buffer.GetData<float>(ref ind, 100f, true);
             data.BalanceConf.StartupPitchTolerance = buffer.GetData<float>(ref ind);
             data.BalanceConf.StartupRollTolerance = buffer.GetData<float>(ref ind);
             data.BalanceConf.StartupSpeed = buffer.GetData<float>(ref ind);
@@ -705,14 +716,14 @@ namespace VescNET.Infra
 
             data.PasConf.CtrlType = (PasControlType)buffer.GetData<byte>(ref ind);
 	        data.PasConf.SensorType = (PasSensorType)buffer.GetData<byte>(ref ind);
-	        data.PasConf.CurrentScaling = buffer.GetHalf<float>(ref ind, 1000f);
-	        data.PasConf.PedalRpmStart = buffer.GetHalf<float>(ref ind, 10f);
-	        data.PasConf.PedalRpmEnd = buffer.GetHalf<float>(ref ind, 10f);
+	        data.PasConf.CurrentScaling = buffer.GetData<float>(ref ind, 1000f, true);
+	        data.PasConf.PedalRpmStart = buffer.GetData<float>(ref ind, 10f, true);
+	        data.PasConf.PedalRpmEnd = buffer.GetData<float>(ref ind, 10f, true);
 	        data.PasConf.InvertPedalDirection = buffer.GetData<bool>(ref ind);
 	        data.PasConf.Magnets = buffer.GetData<ushort>(ref ind);
 	        data.PasConf.UseFilter = buffer.GetData<bool>(ref ind);
-	        data.PasConf.RampTimePos = buffer.GetHalf<float>(ref ind, 100f);
-	        data.PasConf.RampTimeNeg = buffer.GetHalf<float>(ref ind, 100f);
+	        data.PasConf.RampTimePos = buffer.GetData<float>(ref ind, 100f, true);
+	        data.PasConf.RampTimeNeg =  buffer.GetData<float>(ref ind, 100f, true);
 	        data.PasConf.UpdateRateHz = buffer.GetData<ushort>(ref ind);
 
             data.ImuConf.Type = (ImuType)buffer.GetData<byte>(ref ind);
@@ -722,7 +733,7 @@ namespace VescNET.Infra
             //data.ImuConf.AccelLowpassFilterY = buffer.GetHalf<float>(ref ind, 1);
             //data.ImuConf.AccelLowpassFilterZ = buffer.GetHalf<float>(ref ind, 1);
             //data.ImuConf.GyroLowpassFilter = buffer.GetHalf<float>(ref ind, 1);
-            data.ImuConf.SampleRateHz = (int)buffer.GetData<ushort>(ref ind);
+            data.ImuConf.SampleRateHz = buffer.GetData<ushort>(ref ind);
             //data.ImuConf.UseMagnetometer = buffer.GetData<bool>(ref ind);
             data.ImuConf.AccelConfidenceDecay = buffer.GetData<float>(ref ind);
             data.ImuConf.MahonyKp = buffer.GetData<float>(ref ind);
@@ -731,8 +742,8 @@ namespace VescNET.Infra
             data.ImuConf.RotRoll = buffer.GetData<float>(ref ind);
             data.ImuConf.RotPitch = buffer.GetData<float>(ref ind);
             data.ImuConf.RotYaw = buffer.GetData<float>(ref ind);
-            data.ImuConf.AccelOffsets = buffer.GetData<float>(ref ind, 3);
-            data.ImuConf.GyroOffsets = buffer.GetData<float>(ref ind, 3);
+            data.ImuConf.AccelOffsets = buffer.GetData<float>(ref ind, 3, 0.0f, false);
+            data.ImuConf.GyroOffsets = buffer.GetData<float>(ref ind, 3, 0.0f, false);
             _recv.Data = data;
         }
 
@@ -742,7 +753,7 @@ namespace VescNET.Infra
             var data = new DetectedMotorParams();
             data.CycleIntLimit = buffer.GetData<float>(ref ind, 1000.0f);
             data.CouplingK = buffer.GetData<float>(ref ind, 1000.0f);
-            data.HalTable = buffer.GetData<byte>(ref ind, 8);
+            data.HalTable = buffer.GetData<byte>(ref ind, 8, 0.0f, false);
             data.HalRes = buffer.GetData<byte>(ref ind);
             _recv.Data = data;
         }

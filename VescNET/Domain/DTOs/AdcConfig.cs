@@ -30,6 +30,6 @@ namespace VescNET.Domain.DTOs
         public bool MultiEsc { get; set; }
         public bool Tc { get; set; }
         public float TcMaxDiff { get; set; }
-        public uint UpdateRateHz { get; set; }
+        public ushort UpdateRateHz { get; set; }
     }
 }

@@ -113,7 +113,7 @@ namespace VescNET.Domain.DTOs
         public float FocHfiGain { get; set; }
         public float FocHfiHyst { get; set; }
         public float FocSlErpmHfi { get; set; }
-        public float FocHfiStartSamples { get; set; }
+        public ushort FocHfiStartSamples { get; set; }
         public float FocHfiObsOvrSec { get; set; }
         public byte FocHfiSamples { get; set; }
         public byte FocOffsetsCalOnBoot { get; set; }
@@ -141,8 +141,8 @@ namespace VescNET.Domain.DTOs
         public float SPidRampErpmsS { get; set; }
 
         // GPDrive
-        public int GpdBufferNotifyLeft { get; set; }
-        public int GpdBufferInterpol { get; set; }
+        public ushort GpdBufferNotifyLeft { get; set; }
+        public ushort GpdBufferInterpol { get; set; }
         public float GpdCurrentFilterConst { get; set; }
         public float GpdCurrentKp { get; set; }
         public float GpdCurrentKi { get; set; }
@@ -177,7 +177,7 @@ namespace VescNET.Domain.DTOs
         public SensorPortMode MSensorPortMode {get; set;}
         public bool MInvertDirection {get; set;}
         public Drv8301OcMode MDrv8301OcMode {get; set;}
-        public int MDrv8301OcAdj {get; set;}
+        public byte MDrv8301OcAdj {get; set;}
         public float MBldcFSwMin {get; set;}
         public float MBldcFSwMax {get; set;}
         public float MDcFSw {get; set;}
@@ -185,8 +185,8 @@ namespace VescNET.Domain.DTOs
         public OutAuxMode MOutAuxMode {get; set;}
         public TempSensorType MMotorTempSensType {get; set;}
         public float MPtcMotorCoeff {get; set;}
-        public int MHallExtraSamples {get; set;}
-        public int MBattFilterConst {get; set;}
+        public byte MHallExtraSamples {get; set;}
+        public byte MBattFilterConst {get; set;}
         public float MNtcxPtcxTempBase {get; set;}
         public float MNtcxPtcxRes {get; set;}
 
@@ -195,7 +195,7 @@ namespace VescNET.Domain.DTOs
         public float SiGearRatio {get; set;}
         public float SiWheelDiameter {get; set;}
         public BatteryType SiBatteryType {get; set;}
-        public int SiBatteryCells {get; set;}
+        public byte SiBatteryCells {get; set;}
         public float SiBatteryAh {get; set;}
         public float SiMotorNlCurrent {get; set;}
 

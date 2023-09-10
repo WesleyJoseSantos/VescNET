@@ -57,6 +57,10 @@ namespace VescNET.Infra
 
         public void SetAppconf(AppConfiguration appconf)
         {
+            buffer.Clear();
+            buffer.AppendData(CommPacketId.SetMcConf);
+            buffer.AppendData(PacketProcess.AppConfSignature);
+
             buffer.AppendData(appconf.ControllerId);
             buffer.AppendData(appconf.TimeoutMsec);
             buffer.AppendData(appconf.TimeoutBrakeCurrent);
@@ -95,7 +99,7 @@ namespace VescNET.Infra
             buffer.AppendData(appconf.PpmConf.MultiEsc);
             buffer.AppendData(appconf.PpmConf.Tc);
             buffer.AppendData(appconf.PpmConf.TcMaxDiff);
-            buffer.AppendHalf(appconf.PpmConf.MaxErpmForDir, 1f);
+            buffer.AppendData(appconf.PpmConf.MaxErpmForDir, 1f, true);
             buffer.AppendData(appconf.PpmConf.SmartRevMaxDuty);
             buffer.AppendData(appconf.PpmConf.SmartRevRamptime);
 
@@ -169,21 +173,21 @@ namespace VescNET.Infra
             buffer.AppendData(appconf.BalanceConf.FaultDelaySwitchFull);
             buffer.AppendData(appconf.BalanceConf.FaultAdcHalfErpm);
             // buffer.AppendData(appconf.BalanceConf.FaultIsDualSwitch);
-            buffer.AppendHalf(appconf.BalanceConf.TiltbackDutyAngle, 100f);
-            buffer.AppendHalf(appconf.BalanceConf.TiltbackDutySpeed, 100f);
-            buffer.AppendHalf(appconf.BalanceConf.TiltbackDuty, 1000f);
-            buffer.AppendHalf(appconf.BalanceConf.TiltbackHvAngle, 100f);
-            buffer.AppendHalf(appconf.BalanceConf.TiltbackHvSpeed, 100f);
+            buffer.AppendData(appconf.BalanceConf.TiltbackDutyAngle, 100f, true);
+            buffer.AppendData(appconf.BalanceConf.TiltbackDutySpeed, 100f, true);
+            buffer.AppendData(appconf.BalanceConf.TiltbackDuty, 1000f, true);
+            buffer.AppendData(appconf.BalanceConf.TiltbackHvAngle, 100f, true);
+            buffer.AppendData(appconf.BalanceConf.TiltbackHvSpeed, 100f, true);
             buffer.AppendData(appconf.BalanceConf.TiltbackHv);
-            buffer.AppendHalf(appconf.BalanceConf.TiltbackLvAngle, 100f);
-            buffer.AppendHalf(appconf.BalanceConf.TiltbackLvSpeed, 100f);
+            buffer.AppendData(appconf.BalanceConf.TiltbackLvAngle, 100f, true);
+            buffer.AppendData(appconf.BalanceConf.TiltbackLvSpeed, 100f, true);
             buffer.AppendData(appconf.BalanceConf.TiltbackLv);
-            buffer.AppendHalf(appconf.BalanceConf.TiltbackReturnSpeed, 100f);
+            buffer.AppendData(appconf.BalanceConf.TiltbackReturnSpeed, 100f, true);
             buffer.AppendData(appconf.BalanceConf.TiltbackConstant);
             buffer.AppendData(appconf.BalanceConf.TiltbackConstantErpm);
             buffer.AppendData(appconf.BalanceConf.TiltbackVariable);
             buffer.AppendData(appconf.BalanceConf.TiltbackVariableMax);
-            buffer.AppendHalf(appconf.BalanceConf.NoseanglingSpeed, 100f);
+            buffer.AppendData(appconf.BalanceConf.NoseanglingSpeed, 100f, true);
             buffer.AppendData(appconf.BalanceConf.StartupPitchTolerance);
             buffer.AppendData(appconf.BalanceConf.StartupRollTolerance);
             buffer.AppendData(appconf.BalanceConf.StartupSpeed);
@@ -221,14 +225,14 @@ namespace VescNET.Infra
 
             buffer.AppendData(appconf.PasConf.CtrlType);
 	        buffer.AppendData(appconf.PasConf.SensorType);
-	        buffer.AppendHalf(appconf.PasConf.CurrentScaling, 1000f);
-	        buffer.AppendHalf(appconf.PasConf.PedalRpmStart, 10f);
-	        buffer.AppendHalf(appconf.PasConf.PedalRpmEnd, 10f);
+	        buffer.AppendData(appconf.PasConf.CurrentScaling, 1000f, true);
+	        buffer.AppendData(appconf.PasConf.PedalRpmStart, 10f, true);
+	        buffer.AppendData(appconf.PasConf.PedalRpmEnd, 10f, true);
 	        buffer.AppendData(appconf.PasConf.InvertPedalDirection);
 	        buffer.AppendData(appconf.PasConf.Magnets);
 	        buffer.AppendData(appconf.PasConf.UseFilter);
-	        buffer.AppendHalf(appconf.PasConf.RampTimePos, 100f);
-	        buffer.AppendHalf(appconf.PasConf.RampTimeNeg, 100f);
+	        buffer.AppendData(appconf.PasConf.RampTimePos, 100f, true);
+	        buffer.AppendData(appconf.PasConf.RampTimeNeg, 100f, true);
 	        buffer.AppendData(appconf.PasConf.UpdateRateHz);
 
             buffer.AppendData(appconf.ImuConf.Type);
@@ -283,6 +287,10 @@ namespace VescNET.Infra
 
         public void SetMcconf(McConfiguration mcconf)
         {
+            buffer.Clear();
+            buffer.AppendData(CommPacketId.SetMcConf);
+            buffer.AppendData(PacketProcess.McConfSignature);
+
             buffer.AppendData(mcconf.PwmMode);
             buffer.AppendData(mcconf.CommMode);
             buffer.AppendData(mcconf.MotorType);
@@ -295,7 +303,7 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.LAbsCurrentMax);
             buffer.AppendData(mcconf.LMinErpm);
             buffer.AppendData(mcconf.LMaxErpm);
-            buffer.AppendHalf(mcconf.LErpmStart, 10000f);
+            buffer.AppendData(mcconf.LErpmStart, 10000f, true);
             buffer.AppendData(mcconf.LMaxErpmFbrake);
             buffer.AppendData(mcconf.LMaxErpmFbrakeCc);
             buffer.AppendData(mcconf.LMinVin);
@@ -303,25 +311,25 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.LBatteryCutStart);
             buffer.AppendData(mcconf.LBatteryCutEnd);
             buffer.AppendData(mcconf.LSlowAbsCurrent);
-            buffer.AppendHalf(mcconf.LTempFetStart, 1.0f);
-            buffer.AppendHalf(mcconf.LTempFetEnd, 1.0f);
-            buffer.AppendHalf(mcconf.LTempMotorStart, 1.0f);
-            buffer.AppendHalf(mcconf.LTempMotorEnd, 1.0f);
-            buffer.AppendHalf(mcconf.LTempAccelDec, 1.0f);
-            buffer.AppendHalf(mcconf.LMinDuty, 1.0f);
-            buffer.AppendHalf(mcconf.LMaxDuty, 1.0f);
+            buffer.AppendData(mcconf.LTempFetStart, 1.0f, true);
+            buffer.AppendData(mcconf.LTempFetEnd, 1.0f, true);
+            buffer.AppendData(mcconf.LTempMotorStart, 1.0f, true);
+            buffer.AppendData(mcconf.LTempMotorEnd, 1.0f, true);
+            buffer.AppendData(mcconf.LTempAccelDec, 1.0f, true);
+            buffer.AppendData(mcconf.LMinDuty, 1.0f, true);
+            buffer.AppendData(mcconf.LMaxDuty, 1.0f, true);
             buffer.AppendData(mcconf.LWattMax);
             buffer.AppendData(mcconf.LWattMin);
 
-            buffer.AppendHalf(mcconf.LCurrentMaxScale, 10000f);
-            buffer.AppendHalf(mcconf.LCurrentMinScale, 10000f);
-            buffer.AppendHalf(mcconf.LDutyStart, 10000f);
+            buffer.AppendData(mcconf.LCurrentMaxScale, 10000f, true);
+            buffer.AppendData(mcconf.LCurrentMinScale, 10000f, true);
+            buffer.AppendData(mcconf.LDutyStart, 10000f, true);
 
             buffer.AppendData(mcconf.SlMinErpm);
             buffer.AppendData(mcconf.SlMinErpmCycleIntLimit);
             buffer.AppendData(mcconf.SlMaxFullbreakCurrentDirChange);
-            buffer.AppendHalf(mcconf.SlCycleIntLimit, 10f);
-            buffer.AppendHalf(mcconf.SlPhaseAdvanceAtBr, 10000f);
+            buffer.AppendData(mcconf.SlCycleIntLimit, 10f, true);
+            buffer.AppendData(mcconf.SlPhaseAdvanceAtBr, 10000f, true);
             buffer.AppendData(mcconf.SlCycleIntRpmBr);
             buffer.AppendData(mcconf.SlBemfCouplingK);
 
@@ -351,17 +359,17 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.FocMotorFluxLinkage);
             buffer.AppendData(mcconf.FocObserverGain);
             buffer.AppendData(mcconf.FocObserverGainSlow);
-            buffer.AppendHalf(mcconf.FocObserverOffset, 1f);
+            buffer.AppendData(mcconf.FocObserverOffset, 1f, true);
             buffer.AppendData(mcconf.FocDutyDowmrampKp);
             buffer.AppendData(mcconf.FocDutyDowmrampKi);
             buffer.AppendData(mcconf.FocOpenloopRpm);
-            buffer.AppendHalf(mcconf.FocOpenloopRpmLow, 1000f);
+            buffer.AppendData(mcconf.FocOpenloopRpmLow, 1000f, true);
             buffer.AppendData(mcconf.FocDGainScaleStart);
             buffer.AppendData(mcconf.FocDGainScaleMaxMod);
-            buffer.AppendHalf(mcconf.FocSlOpenloopHyst, 100f);
-            buffer.AppendHalf(mcconf.FocSlOpenloopTimeLock, 100f);
-            buffer.AppendHalf(mcconf.FocSlOpenloopTimeRamp, 100f);
-            buffer.AppendHalf(mcconf.FocSlOpenloopTime, 100f);
+            buffer.AppendData(mcconf.FocSlOpenloopHyst, 100f, true);
+            buffer.AppendData(mcconf.FocSlOpenloopTimeLock, 100f, true);
+            buffer.AppendData(mcconf.FocSlOpenloopTimeRamp, 100f, true);
+            buffer.AppendData(mcconf.FocSlOpenloopTime, 100f, true);
 
             buffer.AppendData(mcconf.FocHallTable, 8);
             buffer.AppendData(mcconf.FocHallInterpErpm);
@@ -369,10 +377,10 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.FocSlErpm);
             buffer.AppendData(mcconf.FocSampleV0V7);
             buffer.AppendData(mcconf.FocSampleHighCurrent);
-            buffer.AppendHalf(mcconf.FocSatComp, 1000f);
+            buffer.AppendData(mcconf.FocSatComp, 1000f, true);
             buffer.AppendData(mcconf.FocTempComp);
-            buffer.AppendHalf(mcconf.FocTempCompBaseTemp, 100f);
-            buffer.AppendHalf(mcconf.FocCurrentFilterConst, 10000f);
+            buffer.AppendData(mcconf.FocTempCompBaseTemp, 100f, true);
+            buffer.AppendData(mcconf.FocCurrentFilterConst, 10000f, true);
 
             buffer.AppendData(mcconf.FocCcDecoupling);
             buffer.AppendData(mcconf.FocObserverType);
@@ -387,23 +395,23 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.FocHfiSamples);
             buffer.AppendData(mcconf.FocOffsetsCalOnBoot);
 
-            buffer.AppendData(mcconf.FocOffsetsCurrent, 3);
-            buffer.AppendHalf(mcconf.FocOffsetsVoltage, 3, 10000f);
-            buffer.AppendHalf(mcconf.FocOffsetsVoltageUndriven, 3, 10000f);
+            buffer.AppendData(mcconf.FocOffsetsCurrent);
+            buffer.AppendData(mcconf.FocOffsetsVoltage, 10000f, true);
+            buffer.AppendData(mcconf.FocOffsetsVoltageUndriven, 10000f, true);
             
             buffer.AppendData(mcconf.FocPhaseFilterEnable);
             //buffer.AppendData(mcconf.FocPhaseFilterDisableFault);
             buffer.AppendData(mcconf.FocPhaseFilterMaxErpm);
             buffer.AppendData(mcconf.FocMtpaMode);
             buffer.AppendData(mcconf.FocFwCurrentMax);
-            buffer.AppendHalf(mcconf.FocFwDutyStart, 10000f);
-            buffer.AppendHalf(mcconf.FocFwRampTime, 1000f);
-            buffer.AppendHalf(mcconf.FocFwQCurrentFactor, 10000f);
+            buffer.AppendData(mcconf.FocFwDutyStart, 10000f, true);
+            buffer.AppendData(mcconf.FocFwRampTime, 1000f, true);
+            buffer.AppendData(mcconf.FocFwQCurrentFactor, 10000f, true);
             //buffer.AppendData(mcconf.FocSpeedSoure);
 
             buffer.AppendData(mcconf.GpdBufferNotifyLeft);
             buffer.AppendData(mcconf.GpdBufferInterpol);
-            buffer.AppendHalf(mcconf.GpdCurrentFilterConst, 10000f);
+            buffer.AppendData(mcconf.GpdCurrentFilterConst, 10000f, true);
             buffer.AppendData(mcconf.GpdCurrentKp);
             buffer.AppendData(mcconf.GpdCurrentKi);
 
@@ -411,7 +419,7 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.SPidKp);
             buffer.AppendData(mcconf.SPidKi);
             buffer.AppendData(mcconf.SPidKd);
-            buffer.AppendHalf(mcconf.SPidKdFilter, 10000f);
+            buffer.AppendData(mcconf.SPidKdFilter, 10000f, true);
             buffer.AppendData(mcconf.SPidMinErpm);
             buffer.AppendData(mcconf.SPidAllowBraking);
             buffer.AppendData(mcconf.SPidRampErpmsS);
@@ -422,7 +430,7 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.PPidKdProc);
             buffer.AppendData(mcconf.PPidKdFilter);
             buffer.AppendData(mcconf.PPidAngDiv);
-            buffer.AppendHalf(mcconf.PPidGainDecAngle, 10f);
+            buffer.AppendData(mcconf.PPidGainDecAngle, 10f, true);
             buffer.AppendData(mcconf.PPidOffset);
 
             buffer.AppendData(mcconf.CcStartupBoostDuty);
@@ -451,8 +459,8 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.MOutAuxMode);
             buffer.AppendData(mcconf.MMotorTempSensType);
             buffer.AppendData(mcconf.MPtcMotorCoeff);
-            buffer.AppendHalf(mcconf.MNtcxPtcxRes, 0f);
-            buffer.AppendHalf(mcconf.MNtcxPtcxTempBase, 10f);
+            buffer.AppendData(mcconf.MNtcxPtcxRes, 0f, true);
+            buffer.AppendData(mcconf.MNtcxPtcxTempBase, 10f, true);
             buffer.AppendData(mcconf.MHallExtraSamples);
             //buffer.AppendData(mcconf.MBattFilterConst);
 
@@ -463,15 +471,15 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.SiBatteryCells);
             buffer.AppendData(mcconf.SiBatteryAh);
             buffer.AppendData(mcconf.SiMotorNlCurrent);
-
+            
             buffer.AppendData(mcconf.Bms.Type);
             //buffer.AppendData(mcconf.Bms.LimitMode);
-            buffer.AppendHalf(mcconf.Bms.TLimitStart, 100f);
-            buffer.AppendHalf(mcconf.Bms.TLimitEnd, 100f);
-            buffer.AppendHalf(mcconf.Bms.SocLimitStart, 1000f);
-            buffer.AppendHalf(mcconf.Bms.SocLimitEnd, 1000f);
+            buffer.AppendData(mcconf.Bms.TLimitStart, 100f, true);
+            buffer.AppendData(mcconf.Bms.TLimitEnd, 100f, true);
+            buffer.AppendData(mcconf.Bms.SocLimitStart, 1000f, true);
+            buffer.AppendData(mcconf.Bms.SocLimitEnd, 1000f, true);
             buffer.AppendData(mcconf.Bms.FwdCanMode);
-
+            
             comm.Send(buffer);
         }
 

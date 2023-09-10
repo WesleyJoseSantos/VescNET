@@ -97,6 +97,7 @@
     <Compile Include="Infra\BldcSerial.cs" />
     <Compile Include="Infra\Buffer.cs" />
     <Compile Include="Infra\CRC16.cs" />
+    <Compile Include="Infra\FRexp.cs" />
     <Compile Include="Infra\Packet.cs" />
     <Compile Include="Infra\PacketProcess.cs" />
     <Compile Include="Infra\TerminalCmd.cs" />

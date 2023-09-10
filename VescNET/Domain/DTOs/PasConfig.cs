@@ -14,6 +14,6 @@ namespace VescNET.Domain.DTOs
         public bool UseFilter { get; set; }
         public float RampTimePos { get; set; }
         public float RampTimeNeg { get; set; }
-        public uint UpdateRateHz { get; set; }
+        public ushort UpdateRateHz { get; set; }
     }
 }

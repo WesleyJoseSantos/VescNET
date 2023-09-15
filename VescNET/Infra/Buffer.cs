@@ -26,9 +26,10 @@ namespace VescNET.Infra
             idx = 0;
         }
 
-        public void Init(byte[] data)
+        public void Init(byte[] data, int length = 0)
         {
             _data = data;
+            idx = length;
         }
 
         public void AppendData<T>(T data, float scale = 0.0f, bool half = false)
@@ -175,7 +176,7 @@ namespace VescNET.Infra
 
         private void AppendFloat16(dynamic data, float scale)
         {
-            if(scale == 0) data = AppendAutoScale(data);
+            if(scale == 0) data = Scale.ToInt(data);
             else data = data * scale;
             AppendWord(data);
         }
@@ -183,13 +184,13 @@ namespace VescNET.Infra
         private float GetFloat16(ref int idx, float scale)
         {
             var number = GetWord(ref idx);
-            if (scale == 0) return GetAutoScale((uint)number);
+            if (scale == 0) return Scale.ToFloat((uint)number);
             else return number / scale;
         }
 
         private void AppendFloat32(dynamic data, float scale)
         {
-            if (scale == 0) data = AppendAutoScale(data);
+            if (scale == 0) data = Scale.ToInt(data);
             else data = data * scale;
             AppendDWord(data);
         }
@@ -197,7 +198,7 @@ namespace VescNET.Infra
         private float GetFloat32(ref int idx, float scale)
         {
             var number = GetDWord(ref idx);
-            if (scale == 0) return GetAutoScale(number);
+            if (scale == 0) return Scale.ToFloat(number);
             else return number / scale;
         }
 
@@ -238,57 +239,6 @@ namespace VescNET.Infra
                 array[i] = GetData<T>(ref idx, scale, half);
             }
             return array;
-        }
-
-        private float GetAutoScale(uint res)
-        {
-            int e = (int)((res >> 23) & 0xFF);
-            uint sig_i = res & 0x7FFFFF;
-            bool neg = (res & (1 << 31)) != 0;
-
-            float sig = 0.0f;
-            if (e != 0 || sig_i != 0)
-            {
-                sig = (float)sig_i / (8388608.0f * 2.0f) + 0.5f;
-                e -= 126;
-            }
-
-            if (neg)
-            {
-                sig = -sig;
-            }
-
-            return (float)(sig * Math.Pow(2, e));
-        }
-
-        private uint AppendAutoScale(float number)
-        {
-            if(Math.Abs(number) < 1.5e-38)
-            {
-                number = 0.0f;
-            }
-
-            var result = FRexp.Calc(number);
-            int e = result.exponent;
-            float sig = (float)result.mantissa;
-
-
-            float sigAbs = (float)Math.Abs(sig);
-            uint sigInt = 0;
-
-            if (sigAbs >= 0.5)
-            {
-                sigInt = (uint)((sigAbs - 0.5f) * 2.0f * 8388608.0f);
-                e += 126;
-            }
-
-            var res = (uint)(((e & 0xFF) << 23) | (sigInt & 0x7FFFFF));
-            if (sig < 0)
-            {
-                res |= 1U << 31;
-            }
-
-            return res;
         }
 
     }

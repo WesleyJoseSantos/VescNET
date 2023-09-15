@@ -479,6 +479,8 @@ namespace VescNET.Infra
             buffer.AppendData(mcconf.Bms.SocLimitStart, 1000f, true);
             buffer.AppendData(mcconf.Bms.SocLimitEnd, 1000f, true);
             buffer.AppendData(mcconf.Bms.FwdCanMode);
+
+
             
             comm.Send(buffer);
         }

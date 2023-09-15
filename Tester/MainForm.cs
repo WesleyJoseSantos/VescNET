@@ -55,11 +55,16 @@ namespace Tester
                     Log($"Encoder Offset: {encoder.Offset}");
                     Log($"Encoder Ratio: {encoder.Ratio}");
                     Log($"Encoder Inverted: {encoder.Inverted}");
-                    Log($"Send mcConf to apply the encoder calibration!");
+                    Log("Sending detected encoder parameters to VESC...");
                     var mcConf = propertyGridMcconf.SelectedObject as McConfiguration;
                     mcConf.FocEncoderOffset = encoder.Offset;
                     mcConf.FocEncoderRatio = encoder.Ratio;
                     mcConf.FocEncoderInverted = encoder.Inverted;
+                    bldc.SetMcconf(mcConf);
+                    break;
+                case CommPacketId.SetMcConf:
+                    Log("Mcconf sended to VESC");
+                    bldc.GetMcconf();
                     break;
             }
         }

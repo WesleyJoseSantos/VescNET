@@ -22,6 +22,11 @@ namespace Test.Mocks
             throw new NotImplementedException();
         }
 
+        public void Disconnect()
+        {
+            throw new NotImplementedException();
+        }
+
         public void Send(IBuffer buffer)
         {
             this.buffer = buffer;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Serialization;
 using VescNET.Domain.DTOs;
 
 namespace VescNET.Domain.Interfaces

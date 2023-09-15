@@ -93,9 +93,14 @@ namespace VescNET.Infra
                 return (T)Convert.ChangeType(GetWord(ref idx), typeof(T));
             }
 
-            if (typeof(T) == typeof(uint) || typeof(T) == typeof(int))
+            if (typeof(T) == typeof(uint))
             {
-                return (T)Convert.ChangeType(GetDWord(ref idx), typeof(T));
+                return (T)Convert.ChangeType(GetUInt32(ref idx), typeof(T));
+            }
+
+            if (typeof(T) == typeof(int))
+            {
+                return (T)Convert.ChangeType(GetInt32(ref idx), typeof(T));
             }
 
             if (typeof(T) == typeof(float))
@@ -165,14 +170,32 @@ namespace VescNET.Infra
             _data[idx++] = (byte)(number);
         }
 
-        private uint GetDWord(ref int idx)
+        private int GetInt32(ref int idx)
         {
-            var number = (_data[idx++] << 24);
+            int number = (_data[idx++] << 24);
+            number += (_data[idx++] << 16);
+            number += (_data[idx++] << 8);
+            number += _data[idx++];
+            return number;
+        }
+
+        private uint GetUInt32(ref int idx)
+        {
+            int number = (_data[idx++] << 24);
             number += (_data[idx++] << 16);
             number += (_data[idx++] << 8);
             number += _data[idx++];
             return (uint)number;
         }
+
+        //private T GetDWord<T>(ref int idx)
+        //{
+        //    var number = (_data[idx++] << 24);
+        //    number += (_data[idx++] << 16);
+        //    number += (_data[idx++] << 8);
+        //    number += _data[idx++];
+        //    return (T)Convert.ChangeType(number, typeof(T));
+        //}
 
         private void AppendFloat16(dynamic data, float scale)
         {
@@ -197,7 +220,7 @@ namespace VescNET.Infra
 
         private float GetFloat32(ref int idx, float scale)
         {
-            var number = GetDWord(ref idx);
+            uint number = GetUInt32(ref idx);
             if (scale == 0) return Scale.ToFloat(number);
             else return number / scale;
         }

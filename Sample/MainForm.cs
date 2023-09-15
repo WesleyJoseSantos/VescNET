@@ -10,7 +10,6 @@ namespace Sample
 {
     public partial class MainForm : Form
     {
-        SerialPort serial = new SerialPort();
         IBldcComm comm;
         IBldc bldc;
 
@@ -19,18 +18,46 @@ namespace Sample
             var buffer = new VescNET.Infra.Buffer();
             var packetProcess = new PacketProcess();
             var packet = new Packet(buffer, packetProcess);
+            var serial = new SerialPort();
             comm = new BldcSerial(packet, serial);
 
+            comm.ConnectionChanged += BldcComm_ConnectionChanged;
             comm.OnData += BldcComm_OnData;
 
             bldc = new Bldc(buffer, comm);
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, System.EventArgs e)
+        private void BldcComm_ConnectionChanged(object sender, bool connected)
         {
-            comboBoxPort.Items.AddRange(SerialPort.GetPortNames());
-            comboBoxBaud.SelectedItem = "115200";
+            if (connected)
+            {
+                Log("VESC is connected");
+                btConnect.Invoke((MethodInvoker)delegate
+                {
+                    btConnect.Text = "Disconnect";
+                });
+            }
+            else
+            {
+                Log("VESC is disconected");
+                btConnect.Invoke((MethodInvoker)delegate
+                {
+                    btConnect.Text = "Connect";
+                });
+                tbFirmware.Invoke((MethodInvoker)delegate
+                {
+                    tbFirmware.Text = "";
+                });
+                tbHardware.Invoke((MethodInvoker)delegate
+                {
+                    tbHardware.Text = "";
+                });
+                tbUUID.Invoke((MethodInvoker)delegate
+                {
+                    tbUUID.Text = "";
+                });
+            }
         }
 
         private void BldcComm_OnData(object sender, VescNET.Domain.DTOs.ReceivedData e)
@@ -38,6 +65,20 @@ namespace Sample
             switch (e.PacketId)
             {
                 case CommPacketId.FwVersion:
+                    var info = e.Data as DeviceInfo;
+                    tbFirmware.Invoke((MethodInvoker)delegate
+                    {
+                        tbFirmware.Text = info.FirmwareVersion;
+                    });
+                    tbHardware.Invoke((MethodInvoker)delegate
+                    {
+                        tbHardware.Text = info.HardwareVersion;
+                    });
+                    tbUUID.Invoke((MethodInvoker)delegate
+                    {
+                        tbUUID.Text = BitConverter.ToString(info.Uuid);
+                    });
+                    break;
                 case CommPacketId.GetValues:
                     Log(PacketProcess.PrintData(e));
                     break;
@@ -74,46 +115,17 @@ namespace Sample
             }
         }
 
-        private void btConnect_Click(object sender, System.EventArgs e)
+        private void btConnect_Click(object sender, EventArgs e)
         {
             try
             {
-                if (bldc.Connected)
+                if (comm.Connected == false)
                 {
-                    serial.Close();
-                    btConnect.Text = "Connect";
+                    comm.Connect(bldc);
                 }
-                else
+                else 
                 {
-                    serial.PortName = comboBoxPort.Text;
-                    serial.BaudRate = int.Parse(comboBoxBaud.Text);
-                    serial.Open();
-                    if (serial.IsOpen)
-                    {
-                        btConnect.Text = "Disconnect";
-                        bldc.GetMcconf();
-                    }
-                }
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void btAutoConnect_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (comm.AutoConnect(bldc) == true)
-                {
-                    comboBoxPort.SelectedItem = serial.PortName;
-                    comboBoxBaud.SelectedItem = serial.BaudRate;
-                    bldc.GetMcconf();
-                }
-                else
-                {
-                    MessageBox.Show("Device not detected.");
+                    comm.Disconnect();
                 }
             }
             catch (System.Exception ex)

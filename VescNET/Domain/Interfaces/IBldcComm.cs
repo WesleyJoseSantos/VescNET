@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Serialization;
 using VescNET.Domain.DTOs;
 
 namespace VescNET.Domain.Interfaces
@@ -6,7 +7,10 @@ namespace VescNET.Domain.Interfaces
     public interface IBldcComm
     {
         bool Connected { get; }
-        void Send(IBuffer buffer);
         event EventHandler<ReceivedData> OnData;
+        event EventHandler<bool> ConnectionChanged;
+        void Send(IBuffer buffer);
+        bool Connect(IBldc bldc);
+        void Disconnect();
     }
 }

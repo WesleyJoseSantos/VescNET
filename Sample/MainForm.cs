@@ -37,6 +37,7 @@ namespace Sample
                 {
                     btConnect.Text = "Disconnect";
                 });
+                bldc.GetMcconf();
             }
             else
             {

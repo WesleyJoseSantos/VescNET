@@ -21,36 +21,42 @@ namespace VescNET.Infra
 
         public void GetAppconf()
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.GetAppConf);
             comm.Send(buffer);
         }
 
         public void GetAppconfDefault()
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.GetAppConfDefault);
             comm.Send(buffer);
         }
 
         public void GetFwVersion()
         {
-            buffer.AppendData(CommPacketId.FwVersion); 
+            buffer.Clear();
+            buffer.AppendData(CommPacketId.FwVersion);
             comm.Send(buffer);
         }
 
         public void GetMcconf()
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.GetMcConf);
             comm.Send(buffer);
         }
 
         public void GetMcconfDefault()
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.GetMcConfDefault);
             comm.Send(buffer);
         }
 
         public void GetValues()
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.GetValues);
             comm.Send(buffer);
         }
@@ -58,6 +64,7 @@ namespace VescNET.Infra
         public void SetAppconf(AppConfiguration appconf)
         {
             buffer.Clear();
+
             buffer.AppendData(CommPacketId.SetMcConf);
             buffer.AppendData(PacketProcess.AppConfSignature);
 
@@ -259,6 +266,7 @@ namespace VescNET.Infra
 
         public void SetCurrent(float current)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.SetCurrent);
             buffer.AppendData(current, 1000.0F);
             comm.Send(buffer);
@@ -266,6 +274,7 @@ namespace VescNET.Infra
 
         public void SetCurrentBrake(float current)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.SetCurrentBrake);
             buffer.AppendData(current, 1000.0F);
             comm.Send(buffer);
@@ -273,6 +282,7 @@ namespace VescNET.Infra
 
         public void SetDutyCycle(float dutyCycle)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.SetDuty);
             buffer.AppendData(dutyCycle, 100000);
             comm.Send(buffer);
@@ -280,6 +290,7 @@ namespace VescNET.Infra
 
         public void SetHandbrake(float current)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.SetHandbrake);
             buffer.AppendData(current, 1E3F);
             comm.Send(buffer);
@@ -487,6 +498,7 @@ namespace VescNET.Infra
 
         public void SetPos(float pos)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.SetPos);
             buffer.AppendData(pos, 1000000.0F);
             comm.Send(buffer);
@@ -494,6 +506,7 @@ namespace VescNET.Infra
 
         public void SetRpm(int rpm)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.SetRpm);
             buffer.AppendData(rpm);
             comm.Send(buffer);
@@ -501,6 +514,7 @@ namespace VescNET.Infra
 
         public void SetServoPos(float pos)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.SetServoPos);
             buffer.AppendData(pos, 1000.0F);
             comm.Send(buffer);
@@ -508,6 +522,7 @@ namespace VescNET.Infra
 
         public void DetectEncoder(float current)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.DetectEncoder);
             buffer.AppendData(current, 1e3f);
             comm.Send(buffer);
@@ -515,6 +530,7 @@ namespace VescNET.Infra
 
         public void TerminalCmd(string cmd)
         {
+            buffer.Clear();
             buffer.AppendData(CommPacketId.TerminalCmd);
             buffer.AppendData(cmd);
             comm.Send(buffer);

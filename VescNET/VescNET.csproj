@@ -110,4 +110,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+    nuget pack $(ProjectPath)
+)
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

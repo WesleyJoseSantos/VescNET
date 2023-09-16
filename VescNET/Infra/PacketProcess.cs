@@ -9,7 +9,7 @@ namespace VescNET.Infra
 {
     public class PacketProcess : IPacketProcess
     {
-        private ReceivedData _recv;
+        private readonly ReceivedData _recv;
         private uint _payloadLenght;
 
         public const uint McConfSignature = 1412559730;
@@ -144,16 +144,17 @@ namespace VescNET.Infra
             return _recv;
         }
 
-        static public void PrintData(ReceivedData data)
+        static public string PrintData(ReceivedData data)
         {
+            string text = string.Empty;
             switch (data.PacketId)
             {
                 case CommPacketId.FwVersion:
                     {
                         var e = data.Data as DeviceInfo;
-                        Console.WriteLine($"Firmware Version: {e.FirmwareVersion}");
-                        Console.WriteLine($"Hardware Version: {e.HardwareVersion}");
-                        Console.WriteLine($"UUID: {BitConverter.ToString(e.Uuid)}");
+                        text += ($"Firmware Version: {e.FirmwareVersion}{Environment.NewLine}");
+                        text += ($"Hardware Version: {e.HardwareVersion}{Environment.NewLine}");
+                        text += ($"UUID: {BitConverter.ToString(e.Uuid)}{Environment.NewLine}");
                     }
                     break;
                 case CommPacketId.JumpToBootloader:
@@ -165,24 +166,24 @@ namespace VescNET.Infra
                 case CommPacketId.GetValues:
                     {
                         var e = data.Data as McValues;
-                        Console.WriteLine($"VIn: {e.VIn}");
-                        Console.WriteLine($"TempMos: {e.TempMos}");
-                        Console.WriteLine($"TempMotor: {e.TempMotor}");
-                        Console.WriteLine($"CurrentMotor: {e.CurrentMotor}");
-                        Console.WriteLine($"CurrentIn: {e.CurrentIn}");
-                        Console.WriteLine($"Id: {e.Id}");
-                        Console.WriteLine($"Iq: {e.Iq}");
-                        Console.WriteLine($"Rpm: {e.Rpm}");
-                        Console.WriteLine($"DutyNow: {e.DutyNow}");
-                        Console.WriteLine($"AmpHours: {e.AmpHours}");
-                        Console.WriteLine($"AmpHoursCharged: {e.AmpHoursCharged}");
-                        Console.WriteLine($"WattHours: {e.WattHours}");
-                        Console.WriteLine($"WattHoursCharged: {e.WattHoursCharged}");
-                        Console.WriteLine($"Tachometer: {e.Tachometer}");
-                        Console.WriteLine($"TachometerAbs: {e.TachometerAbs}");
-                        Console.WriteLine($"FaultCode: {e.FaultCode}");
-                        Console.WriteLine($"PidPos: {e.PidPos}");
-                        Console.WriteLine($"VescId: {e.VescId}");
+                        text += ($"VIn: {e.VIn}{Environment.NewLine}");
+                        text += ($"TempMos: {e.TempMos}{Environment.NewLine}");
+                        text += ($"TempMotor: {e.TempMotor}{Environment.NewLine}");
+                        text += ($"CurrentMotor: {e.CurrentMotor}{Environment.NewLine}");
+                        text += ($"CurrentIn: {e.CurrentIn}{Environment.NewLine}");
+                        text += ($"Id: {e.Id}{Environment.NewLine}");
+                        text += ($"Iq: {e.Iq}{Environment.NewLine}");
+                        text += ($"Rpm: {e.Rpm}{Environment.NewLine}");
+                        text += ($"DutyNow: {e.DutyNow}{Environment.NewLine}");
+                        text += ($"AmpHours: {e.AmpHours}{Environment.NewLine}");
+                        text += ($"AmpHoursCharged: {e.AmpHoursCharged}{Environment.NewLine}");
+                        text += ($"WattHours: {e.WattHours}{Environment.NewLine}");
+                        text += ($"WattHoursCharged: {e.WattHoursCharged}{Environment.NewLine}");
+                        text += ($"Tachometer: {e.Tachometer}{Environment.NewLine}");
+                        text += ($"TachometerAbs: {e.TachometerAbs}{Environment.NewLine}");
+                        text += ($"FaultCode: {e.FaultCode}{Environment.NewLine}");
+                        text += ($"PidPos: {e.PidPos}{Environment.NewLine}");
+                        text += ($"VescId: {e.VescId}{Environment.NewLine}");
                     }
                     break;
                 case CommPacketId.SetDuty:
@@ -218,7 +219,7 @@ namespace VescNET.Infra
                 case CommPacketId.TerminalCmd:
                     break;
                 case CommPacketId.Print:
-                    Console.WriteLine(data.Data);
+                    text += (data.Data);
                     break;
                 case CommPacketId.RotorPosition:
                     break;
@@ -255,6 +256,7 @@ namespace VescNET.Infra
                 default:
                     break;
             }
+            return text;
         }
 
         private void OnFwVersion(IBuffer buffer) 
@@ -331,10 +333,12 @@ namespace VescNET.Infra
         private void OnDetectEncoder(IBuffer buffer)
         {
             var ind = 1;
-            var data = new DetectEncoderResult();
-            data.Offset = buffer.GetData<float>(ref ind, 1e6f);
-            data.Ratio = buffer.GetData<float>(ref ind, 1e6f);
-            data.Inverted = buffer.GetData<bool>(ref ind);
+            var data = new DetectEncoderResult
+            {
+                Offset = buffer.GetData<float>(ref ind, 1e6f),
+                Ratio = buffer.GetData<float>(ref ind, 1e6f),
+                Inverted = buffer.GetData<bool>(ref ind)
+            };
             _recv.Data = data;
         }
 
@@ -750,11 +754,13 @@ namespace VescNET.Infra
         void OnDetectMotorParam(IBuffer buffer) 
         {
             var ind = 1;
-            var data = new DetectedMotorParams();
-            data.CycleIntLimit = buffer.GetData<float>(ref ind, 1000.0f);
-            data.CouplingK = buffer.GetData<float>(ref ind, 1000.0f);
-            data.HalTable = buffer.GetData<byte>(ref ind, 8, 0.0f, false);
-            data.HalRes = buffer.GetData<byte>(ref ind);
+            var data = new DetectedMotorParams
+            {
+                CycleIntLimit = buffer.GetData<float>(ref ind, 1000.0f),
+                CouplingK = buffer.GetData<float>(ref ind, 1000.0f),
+                HalTable = buffer.GetData<byte>(ref ind, 8, 0.0f, false),
+                HalRes = buffer.GetData<byte>(ref ind)
+            };
             _recv.Data = data;
         }
     }

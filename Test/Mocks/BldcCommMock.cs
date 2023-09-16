@@ -15,6 +15,17 @@ namespace Test.Mocks
         public bool Connected => true;
 
         public event EventHandler<ReceivedData> OnData;
+        public event EventHandler<bool> ConnectionChanged;
+
+        public bool Connect(IBldc bldc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Disconnect()
+        {
+            throw new NotImplementedException();
+        }
 
         public void Send(IBuffer buffer)
         {

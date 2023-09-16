@@ -8,17 +8,17 @@ namespace VescNET.Infra
     public class Packet : IPacket
     {
         const int _packetMaxLength = 512;
-        const int _packetRxTimeout = 2;
+        //const int _packetRxTimeout = 2;
 
         private ReceivedData _receivedData;
-        private IBuffer _buffer;
-        private IPacketProcess _packetProcess;
+        private readonly IBuffer _buffer;
+        private readonly IPacketProcess _packetProcess;
 
         private int _rxState;
-        private int _rxTimeout;
+        //private int _rxTimeout;
         private uint _payloadLength;
-        private byte[] _rxBuf;
-        private byte[] _txBuf;
+        private readonly byte[] _rxBuf;
+        private readonly byte[] _txBuf;
         private uint _rxDataPtr;
         private int _crcLow;
         private int _crcHigh;
@@ -47,7 +47,7 @@ namespace VescNET.Infra
                     {
                         // 1 byte PL len
                         _rxState += 2;
-                        _rxTimeout = _packetRxTimeout;
+                        //_rxTimeout = _packetRxTimeout;
                         _rxDataPtr = 0;
                         _payloadLength = 0;
                         _processState = PacketProcessState.Processing;
@@ -55,7 +55,7 @@ namespace VescNET.Infra
                     else if (@byte == 3)
                     {
                         _rxState++;
-                        _rxTimeout = _packetRxTimeout;
+                        //_rxTimeout = _packetRxTimeout;
                         _rxDataPtr = 0;
                         _payloadLength = 0;
                         _processState = PacketProcessState.Processing;
@@ -70,7 +70,7 @@ namespace VescNET.Infra
                 case 1:
                     _payloadLength = (uint)@byte << 8;
                     _rxState++;
-                    _rxTimeout = _packetRxTimeout;
+                    //_rxTimeout = _packetRxTimeout;
                     break;
 
                 case 2:
@@ -78,7 +78,7 @@ namespace VescNET.Infra
                     if(_payloadLength > 0 && _payloadLength <= _packetMaxLength)
                     {
                         _rxState++;
-                        _rxTimeout = _packetRxTimeout;
+                        //_rxTimeout = _packetRxTimeout;
                     } else
                     {
                         _rxState = 0;
@@ -92,19 +92,19 @@ namespace VescNET.Infra
                     {
                         _rxState++;
                     }
-                    _rxTimeout = _packetRxTimeout;
+                    //_rxTimeout = _packetRxTimeout;
                     break;
 
                 case 4:
                     _crcHigh = @byte;
                     _rxState++;
-                    _rxTimeout = _packetRxTimeout;
+                    //_rxTimeout = _packetRxTimeout;
                     break;
 
                 case 5:
                     _crcLow = @byte;
                     _rxState++;
-                    _rxTimeout = _packetRxTimeout;
+                    //_rxTimeout = _packetRxTimeout;
                     break;
 
                 case 6:

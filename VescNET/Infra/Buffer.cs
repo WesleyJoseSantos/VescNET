@@ -200,7 +200,7 @@ namespace VescNET.Infra
         private void AppendFloat16(dynamic data, float scale)
         {
             if(scale == 0) data = Scale.ToInt(data);
-            else data = data * scale;
+            else data *= scale;
             AppendWord(data);
         }
 
@@ -214,7 +214,7 @@ namespace VescNET.Infra
         private void AppendFloat32(dynamic data, float scale)
         {
             if (scale == 0) data = Scale.ToInt(data);
-            else data = data * scale;
+            else data *= scale;
             AppendDWord(data);
         }
 

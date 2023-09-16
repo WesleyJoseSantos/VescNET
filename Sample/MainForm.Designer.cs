@@ -171,7 +171,7 @@
             this.btConnect.TabIndex = 2;
             this.btConnect.Text = "Connect";
             this.btConnect.UseVisualStyleBackColor = true;
-            this.btConnect.Click += new System.EventHandler(this.btConnect_Click);
+            this.btConnect.Click += new System.EventHandler(this.BtConnect_Click);
             // 
             // label4
             // 
@@ -260,7 +260,7 @@
             this.buttonSendMcconf.TabIndex = 0;
             this.buttonSendMcconf.Text = "Send";
             this.buttonSendMcconf.UseVisualStyleBackColor = true;
-            this.buttonSendMcconf.Click += new System.EventHandler(this.btSendMcconf_Click);
+            this.buttonSendMcconf.Click += new System.EventHandler(this.BtSendMcconf_Click);
             // 
             // buttonReadMcconf
             // 
@@ -271,7 +271,7 @@
             this.buttonReadMcconf.TabIndex = 0;
             this.buttonReadMcconf.Text = "Read";
             this.buttonReadMcconf.UseVisualStyleBackColor = true;
-            this.buttonReadMcconf.Click += new System.EventHandler(this.btReadMcconf_Click);
+            this.buttonReadMcconf.Click += new System.EventHandler(this.BtReadMcconf_Click);
             // 
             // tabPageAppconf
             // 
@@ -331,7 +331,7 @@
             this.buttonSendAppconf.TabIndex = 0;
             this.buttonSendAppconf.Text = "Send";
             this.buttonSendAppconf.UseVisualStyleBackColor = true;
-            this.buttonSendAppconf.Click += new System.EventHandler(this.btSendAppconf_Click);
+            this.buttonSendAppconf.Click += new System.EventHandler(this.BtSendAppconf_Click);
             // 
             // buttonReadAppconf
             // 
@@ -342,7 +342,7 @@
             this.buttonReadAppconf.TabIndex = 0;
             this.buttonReadAppconf.Text = "Read";
             this.buttonReadAppconf.UseVisualStyleBackColor = true;
-            this.buttonReadAppconf.Click += new System.EventHandler(this.btReadAppconf_Click);
+            this.buttonReadAppconf.Click += new System.EventHandler(this.BtReadAppconf_Click);
             // 
             // tabPageCommands
             // 
@@ -414,7 +414,7 @@
             this.btDetectEncoder.TabIndex = 0;
             this.btDetectEncoder.Text = "Detect Encoder";
             this.btDetectEncoder.UseVisualStyleBackColor = true;
-            this.btDetectEncoder.Click += new System.EventHandler(this.btDetectEncoder_Click);
+            this.btDetectEncoder.Click += new System.EventHandler(this.BtDetectEncoder_Click);
             // 
             // btGetValues
             // 
@@ -435,7 +435,7 @@
             this.btSetDutyCycle.TabIndex = 0;
             this.btSetDutyCycle.Text = "Set Duty Cycle";
             this.btSetDutyCycle.UseVisualStyleBackColor = true;
-            this.btSetDutyCycle.Click += new System.EventHandler(this.btSetDutyCycle_Click);
+            this.btSetDutyCycle.Click += new System.EventHandler(this.BtSetDutyCycle_Click);
             // 
             // btSetCurrent
             // 
@@ -446,7 +446,7 @@
             this.btSetCurrent.TabIndex = 0;
             this.btSetCurrent.Text = "Set Current";
             this.btSetCurrent.UseVisualStyleBackColor = true;
-            this.btSetCurrent.Click += new System.EventHandler(this.btSetCurrent_Click);
+            this.btSetCurrent.Click += new System.EventHandler(this.BtSetCurrent_Click);
             // 
             // btSetCurrentBrake
             // 
@@ -457,7 +457,7 @@
             this.btSetCurrentBrake.TabIndex = 0;
             this.btSetCurrentBrake.Text = "Set Current Brake";
             this.btSetCurrentBrake.UseVisualStyleBackColor = true;
-            this.btSetCurrentBrake.Click += new System.EventHandler(this.btSetCurrentBrake_Click);
+            this.btSetCurrentBrake.Click += new System.EventHandler(this.BtSetCurrentBrake_Click);
             // 
             // btSetRPM
             // 
@@ -468,7 +468,7 @@
             this.btSetRPM.TabIndex = 0;
             this.btSetRPM.Text = "Set RPM";
             this.btSetRPM.UseVisualStyleBackColor = true;
-            this.btSetRPM.Click += new System.EventHandler(this.btSetRPM_Click);
+            this.btSetRPM.Click += new System.EventHandler(this.BtSetRPM_Click);
             // 
             // btSetPos
             // 
@@ -479,7 +479,7 @@
             this.btSetPos.TabIndex = 0;
             this.btSetPos.Text = "Set Position";
             this.btSetPos.UseVisualStyleBackColor = true;
-            this.btSetPos.Click += new System.EventHandler(this.btSetPos_Click);
+            this.btSetPos.Click += new System.EventHandler(this.BtSetPos_Click);
             // 
             // btSetHandbrake
             // 
@@ -490,7 +490,7 @@
             this.btSetHandbrake.TabIndex = 0;
             this.btSetHandbrake.Text = "Set Handbrake";
             this.btSetHandbrake.UseVisualStyleBackColor = true;
-            this.btSetHandbrake.Click += new System.EventHandler(this.btSetHandbrake_Click);
+            this.btSetHandbrake.Click += new System.EventHandler(this.BtSetHandbrake_Click);
             // 
             // btSetServoPos
             // 
@@ -501,7 +501,7 @@
             this.btSetServoPos.TabIndex = 0;
             this.btSetServoPos.Text = "Set Servo Pos";
             this.btSetServoPos.UseVisualStyleBackColor = true;
-            this.btSetServoPos.Click += new System.EventHandler(this.btSetServoPos_Click);
+            this.btSetServoPos.Click += new System.EventHandler(this.BtSetServoPos_Click);
             // 
             // tbDutyCycle
             // 

@@ -48,7 +48,9 @@ namespace VescNET.Infra
                 e += 126;
             }
 
-            var res = (uint)(((e & 0xFF) << 23) | (sigInt & 0x7FFFFF));
+            //var res = (uint)(((e & 0xFF) << 23) | (sigInt & 0x7FFFFF));
+            var res = ((uint)(e & 0xFF) << 23) | ((uint)sigInt & 0x7FFFFF);
+
             if (sig < 0)
             {
                 res |= 1U << 31;

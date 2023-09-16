@@ -10,8 +10,8 @@ namespace Sample
 {
     public partial class MainForm : Form
     {
-        IBldcComm comm;
-        IBldc bldc;
+        readonly IBldcComm comm;
+        readonly IBldc bldc;
 
         public MainForm()
         {
@@ -112,10 +112,14 @@ namespace Sample
                     Log("Mcconf sended to VESC");
                     bldc.GetMcconf();
                     break;
+                case CommPacketId.SetAppConf:
+                    Log("Appconf sended to VESC");
+                    bldc.GetAppconf();
+                    break;
             }
         }
 
-        private void btConnect_Click(object sender, EventArgs e)
+        private void BtConnect_Click(object sender, EventArgs e)
         {
             try
             {
@@ -134,7 +138,7 @@ namespace Sample
             }
         }
 
-        private void btSendMcconf_Click(object sender, System.EventArgs e)
+        private void BtSendMcconf_Click(object sender, System.EventArgs e)
         {
             if(propertyGridMcconf.SelectedObject != null && propertyGridMcconf.SelectedObject is McConfiguration)
             {
@@ -142,12 +146,12 @@ namespace Sample
             }
         }
 
-        private void btReadMcconf_Click(object sender, System.EventArgs e)
+        private void BtReadMcconf_Click(object sender, System.EventArgs e)
         {
             bldc.GetMcconf();
         }
 
-        private void btSendAppconf_Click(object sender, System.EventArgs e)
+        private void BtSendAppconf_Click(object sender, System.EventArgs e)
         {
             if (propertyGridAppconf.SelectedObject != null && propertyGridAppconf.SelectedObject is AppConfiguration)
             {
@@ -155,22 +159,22 @@ namespace Sample
             }
         }
 
-        private void btReadAppconf_Click(object sender, System.EventArgs e)
+        private void BtReadAppconf_Click(object sender, System.EventArgs e)
         {
             bldc.GetAppconf();
         }
 
-        private void btGetFwInfo_Click(object sender, EventArgs e)
+        private void BtGetFwInfo_Click(object sender, EventArgs e)
         {
             bldc.GetFwVersion();
         }
 
-        private void btGetValues_Click(object sender, EventArgs e)
+        private void BtGetValues_Click(object sender, EventArgs e)
         {
             bldc.GetValues();
         }
 
-        private void btSetDutyCycle_Click(object sender, EventArgs e)
+        private void BtSetDutyCycle_Click(object sender, EventArgs e)
         {
             if (float.TryParse(tbDutyCycle.Text, out float dutyCycle))
             {
@@ -183,7 +187,7 @@ namespace Sample
             }
         }
 
-        private void btSetCurrent_Click(object sender, EventArgs e)
+        private void BtSetCurrent_Click(object sender, EventArgs e)
         {
             if (float.TryParse(tbCurrent.Text, out float current))
             {
@@ -196,7 +200,7 @@ namespace Sample
             }
         }
 
-        private void btSetCurrentBrake_Click(object sender, EventArgs e)
+        private void BtSetCurrentBrake_Click(object sender, EventArgs e)
         {
             if (float.TryParse(tbCurrentBrake.Text, out float current))
             {
@@ -209,7 +213,7 @@ namespace Sample
             }
         }
 
-        private void btSetRPM_Click(object sender, EventArgs e)
+        private void BtSetRPM_Click(object sender, EventArgs e)
         {
             if (int.TryParse(tbRpm.Text, out int rpm))
             {
@@ -222,7 +226,7 @@ namespace Sample
             }
         }
 
-        private void btSetPos_Click(object sender, EventArgs e)
+        private void BtSetPos_Click(object sender, EventArgs e)
         {
             if (float.TryParse(tbPos.Text, out float pos))
             {
@@ -235,7 +239,7 @@ namespace Sample
             }
         }
 
-        private void btSetHandbrake_Click(object sender, EventArgs e)
+        private void BtSetHandbrake_Click(object sender, EventArgs e)
         {
             if (float.TryParse(tbHandbrake.Text, out float current))
             {
@@ -248,7 +252,7 @@ namespace Sample
             }
         }
 
-        private void btSetServoPos_Click(object sender, EventArgs e)
+        private void BtSetServoPos_Click(object sender, EventArgs e)
         {
             if (float.TryParse(tbServoPos.Text, out float pos))
             {
@@ -261,7 +265,7 @@ namespace Sample
             }
         }
 
-        private void btDetectEncoder_Click(object sender, EventArgs e)
+        private void BtDetectEncoder_Click(object sender, EventArgs e)
         {
             if(float.TryParse(tbDetectEncoder.Text, out float current))
             {

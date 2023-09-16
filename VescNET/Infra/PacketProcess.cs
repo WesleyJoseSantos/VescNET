@@ -9,7 +9,7 @@ namespace VescNET.Infra
 {
     public class PacketProcess : IPacketProcess
     {
-        private ReceivedData _recv;
+        private readonly ReceivedData _recv;
         private uint _payloadLenght;
 
         public const uint McConfSignature = 1412559730;
@@ -333,10 +333,12 @@ namespace VescNET.Infra
         private void OnDetectEncoder(IBuffer buffer)
         {
             var ind = 1;
-            var data = new DetectEncoderResult();
-            data.Offset = buffer.GetData<float>(ref ind, 1e6f);
-            data.Ratio = buffer.GetData<float>(ref ind, 1e6f);
-            data.Inverted = buffer.GetData<bool>(ref ind);
+            var data = new DetectEncoderResult
+            {
+                Offset = buffer.GetData<float>(ref ind, 1e6f),
+                Ratio = buffer.GetData<float>(ref ind, 1e6f),
+                Inverted = buffer.GetData<bool>(ref ind)
+            };
             _recv.Data = data;
         }
 
@@ -752,11 +754,13 @@ namespace VescNET.Infra
         void OnDetectMotorParam(IBuffer buffer) 
         {
             var ind = 1;
-            var data = new DetectedMotorParams();
-            data.CycleIntLimit = buffer.GetData<float>(ref ind, 1000.0f);
-            data.CouplingK = buffer.GetData<float>(ref ind, 1000.0f);
-            data.HalTable = buffer.GetData<byte>(ref ind, 8, 0.0f, false);
-            data.HalRes = buffer.GetData<byte>(ref ind);
+            var data = new DetectedMotorParams
+            {
+                CycleIntLimit = buffer.GetData<float>(ref ind, 1000.0f),
+                CouplingK = buffer.GetData<float>(ref ind, 1000.0f),
+                HalTable = buffer.GetData<byte>(ref ind, 8, 0.0f, false),
+                HalRes = buffer.GetData<byte>(ref ind)
+            };
             _recv.Data = data;
         }
     }

@@ -9,6 +9,8 @@ namespace VescNET.Infra
     {
         bool connected = false;
 
+        bool init = false;
+
         private readonly IPacket packet;
 
         private readonly SerialPort serial;
@@ -24,8 +26,6 @@ namespace VescNET.Infra
             this.packet = packet;
             this.serial = serial;
             this.serial.ReadTimeout = 100;
-            this.serial.DataReceived += Serial_DataReceived;
-            this.serial.ErrorReceived += Serial_ErrorReceived;
         }
 
         private void Serial_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -54,6 +54,12 @@ namespace VescNET.Infra
                 if(connected == false)
                 {
                     connected = true;
+                    if(init == false)
+                    {
+                        serial.DataReceived += Serial_DataReceived;
+                        serial.ErrorReceived += Serial_ErrorReceived;
+                        init = true;
+                    }
                     ConnectionChanged?.Invoke(this, connected);
                 }
             }
@@ -82,6 +88,7 @@ namespace VescNET.Infra
                     serial.Open();
                     serial.DiscardInBuffer();
                     bldc.GetFwVersion();
+                    System.Threading.Thread.Sleep(100);
                     var bytes = serial.Read(buffer, 0, 64);
                     for (int i = 0; i < bytes; i++)
                     {

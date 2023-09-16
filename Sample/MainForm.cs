@@ -20,11 +20,11 @@ namespace Sample
             var packet = new Packet(buffer, packetProcess);
             var serial = new SerialPort();
             comm = new BldcSerial(packet, serial);
+            bldc = new Bldc(buffer, comm);
 
             comm.ConnectionChanged += BldcComm_ConnectionChanged;
             comm.OnData += BldcComm_OnData;
 
-            bldc = new Bldc(buffer, comm);
             InitializeComponent();
         }
 

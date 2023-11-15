@@ -1,5 +1,6 @@
 # VescNET
 
-## [0.1.0.0] - 15/09/2023
+## [0.1.1.0]
 
- - First release
+### Fixed
+ - Fixed PacketId used on setAppConf

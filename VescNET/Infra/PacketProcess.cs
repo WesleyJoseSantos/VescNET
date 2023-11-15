@@ -72,9 +72,9 @@ namespace VescNET.Infra
                 case CommPacketId.GetMcConfDefault:
                     OnGetMcConf(buffer);
                     break;
-                //case CommPacketId.SetAppConf:
-                //    // This is a confirmation that the new appconf is received.
-                //    break;
+                case CommPacketId.SetAppConf:
+                    // This is a confirmation that the new appconf is received.
+                    break;
                 case CommPacketId.GetAppConf:
                 case CommPacketId.GetAppConfDefault:
                     OnGetAppConf(buffer);

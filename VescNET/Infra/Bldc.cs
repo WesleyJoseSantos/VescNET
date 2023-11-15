@@ -65,7 +65,7 @@ namespace VescNET.Infra
         {
             buffer.Clear();
 
-            buffer.AppendData(CommPacketId.SetMcConf);
+            buffer.AppendData(CommPacketId.SetAppConf);
             buffer.AppendData(PacketProcess.AppConfSignature);
 
             buffer.AppendData(appconf.ControllerId);

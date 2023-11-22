@@ -1,0 +1,20 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Nuget Package",
+            "type": "shell",
+            "command": "nuget pack -Properties Configuration=Release",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "VescNET"
+            }
+        },
+        {
+            "label": "Publish Package",
+            "type": "shell",
+            "command": "dotnet nuget push VescNET\\VescNET.0.2.0.nupkg -k $Env:NUGET_API_KEY -s https://api.nuget.org/v3/index.json",
+            "problemMatcher": []
+        }
+    ]
+}

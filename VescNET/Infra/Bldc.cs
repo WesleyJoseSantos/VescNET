@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net;
-using VescNET.Domain.DTOs;
+﻿using VescNET.Domain.DTOs;
 using VescNET.Domain.Enums;
 using VescNET.Domain.Interfaces;
 
@@ -534,6 +532,21 @@ namespace VescNET.Infra
             buffer.AppendData(CommPacketId.TerminalCmd);
             buffer.AppendData(cmd);
             comm.Send(buffer);
+        }
+
+        public void Reboot()
+        {
+            buffer.Clear();
+            buffer.AppendData(CommPacketId.Reboot);
+            comm.Send(buffer);
+        }
+
+        public void SendCmd(CommPacketId cmd)
+        {
+            buffer.Clear();
+            buffer.AppendData((byte)cmd);
+            comm.Send(buffer);
+            System.Threading.Thread.Sleep(250);
         }
     }
 }

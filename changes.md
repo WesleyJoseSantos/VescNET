@@ -1,6 +1,10 @@
 # VescNET
 
-## [0.1.1.0]
+## [0.2.0.0]
 
 ### Fixed
- - Fixed PacketId used on setAppConf
+ - Fix serial.Close freezing application
+
+### Added
+ - Method to reboot VESC
+ - Method to send generic CMD to VESC 

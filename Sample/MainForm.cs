@@ -293,5 +293,10 @@ namespace Sample
                 textBoxLog.AppendText($"{msg}{Environment.NewLine}");
             }
         }
+
+        private void btReboot_Click(object sender, EventArgs e)
+        {
+            bldc.Reboot();
+        }
     }
 }

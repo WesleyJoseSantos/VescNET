@@ -1,4 +1,5 @@
 ﻿using VescNET.Domain.DTOs;
+using VescNET.Domain.Enums;
 
 namespace VescNET.Domain.Interfaces
 {
@@ -26,5 +27,9 @@ namespace VescNET.Domain.Interfaces
         void DetectEncoder(float current);
 
         void TerminalCmd(string cmd);
+
+        void Reboot();
+
+        void SendCmd(CommPacketId cmd);
     }
 }
